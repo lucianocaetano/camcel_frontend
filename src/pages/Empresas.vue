@@ -32,14 +32,12 @@
 <script>
 import BotonEmpresas from 'src/components/BotonEmpresas.vue';
 import { api } from "src/boot/axios";
-import { useUserStore } from "src/store/user.store";
 import { ref } from "vue";
 
 export default {
    components: {
       BotonEmpresas
    }, setup () {
-
       const search = ref("");
       const isLoading = ref(true)
       const empresas = ref(null)

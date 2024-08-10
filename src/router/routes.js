@@ -7,8 +7,6 @@ const routes = [
     ]
   },
 
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/error/',
     component: () => import('layouts/MainLayout.vue'),
@@ -32,14 +30,7 @@ const routes = [
     path: '/empresas/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/Empresas.vue') }
-    ]
-  },
-  {
-    path: '/empresas/:slug',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('src/pages/EmpresaDetalles.vue') }
+      { path: ':slug', component: () => import('src/pages/EmpresaDetalles.vue'), name: "enterprise-detail" }
     ]
   },
   {

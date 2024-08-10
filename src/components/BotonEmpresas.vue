@@ -18,7 +18,7 @@
           size="30px"
         />
       </div>
-      <router-link class="text-md" :to="{name= '/enterprise', params: {slug: empresa.slug}}">
+      <router-link class="text-md" :to="{name: 'enterprise-detail', params: {slug: empresa.slug}}">
         <q-icon name="arrow_forward" size="20px" />
       </router-link>
     </q-card-section>

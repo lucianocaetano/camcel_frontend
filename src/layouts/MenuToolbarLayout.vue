@@ -60,13 +60,18 @@
           <q-list>
 
             <template v-for="(menuItem, index) in menuList" :key="index">
-              <q-item clickable :active="menuItem.label === 'Outbox'" v-ripple>
-                <q-item-section avatar>
-                  <q-icon :name="menuItem.icon" />
-                </q-item-section>
-                <q-item-section>
-                  {{ menuItem.label }}
-                </q-item-section>
+              <q-item clickable v-ripple>
+                <q-btn
+                  :to="{ name: menuItem.href }"
+                  flat
+                 >
+                  <q-item-section avatar>
+                    <q-icon :name="menuItem.icon" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{menuItem.label}}
+                  </q-item-section>
+                </q-btn>
               </q-item>
               <q-separator :key="'sep' + index"  v-if="menuItem.separator" />
             </template>
@@ -93,6 +98,7 @@ const menuList = [
   {
     icon: 'business_center',
     label: 'Empresas',
+    href: "enterprises", 
     separator: false 
   },
   {

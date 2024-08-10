@@ -40,18 +40,11 @@ export default {
       BotonEmpresas
    }, setup () {
 
-      const userStore = useUserStore()
-
       const search = ref("");
       const isLoading = ref(true)
       const empresas = ref(null)
 
-      api.get("enterprises", {
-         headers: {
-            "Authorization": "Bearer " + userStore.getToken
-         }
-      }).then((response) => {
-         console.log(response)
+      api.get("enterprises").then((response) => {
          isLoading.value = false
          empresas.value = response.data
       })

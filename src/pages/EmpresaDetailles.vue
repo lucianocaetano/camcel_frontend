@@ -1,0 +1,3 @@
+<template>
+    details enterprise
+</template>

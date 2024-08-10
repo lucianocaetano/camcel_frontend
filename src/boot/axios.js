@@ -23,6 +23,18 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 })
 
+
+api.interceptors.request.use(function (config) {
+  const userStore = useUserStore()
+
+  if (userStore.getToken){
+    console.log(userStore.getToken)
+    config.headers.Authorization = `Bearer ${userStore.getToken}`
+  }
+
+  return config
+})
+
 api.interceptors.response.use(function (config) {
   return config;
 }, function (error) {

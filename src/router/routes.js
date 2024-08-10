@@ -30,6 +30,7 @@ const routes = [
     path: '/empresas/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
+      { path: '', component: () => import('src/pages/Empresas.vue'), name: "enterprises"},
       { path: ':slug', component: () => import('src/pages/EmpresaDetalles.vue'), name: "enterprise-detail" }
     ]
   },

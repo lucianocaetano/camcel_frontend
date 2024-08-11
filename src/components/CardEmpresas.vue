@@ -11,10 +11,10 @@
     </q-card-section>
     <q-card-section class="text-right row items-center justify-between"> 
       <div class="text-caption text-grey">
-        {{ empresa.verificado ? "Verificado" : "No verificado" }} 
+        {{ empresa.is_valid === 1? "Verificado" : "No verificado" }} 
         <q-icon
-          :name="empresa.verificado ? 'check_circle' : 'cancel'"
-          :color="empresa.verificado ? 'green' : 'red'"
+          :name="empresa.is_valid === 1 ? 'check_circle' : 'cancel'"
+          :color="empresa.is_valid === 1? 'green' : 'red'"
           size="30px"
         />
       </div>

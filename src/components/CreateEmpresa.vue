@@ -44,6 +44,7 @@ export default {
     const enterpriseCreate = ref(false);
     const isLoading = ref(true)
     const users = ref([]);
+
     const formattedUsers = computed(() => {
       return users.value.map(user => ({
         label: user.name,
@@ -57,7 +58,7 @@ export default {
     
     const handleCreateEnterprise = () => {
       api.post("admin/enterprises", dataCreateEnterprise).then((response) => {
-        console.log(response.data.enterprise)
+        enterpriseCreate.value = false
         enterpriseStore.addEnterprise(response.data.enterprise)
       })
     }

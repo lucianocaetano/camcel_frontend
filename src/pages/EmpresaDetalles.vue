@@ -19,14 +19,17 @@
                 </p>
                 <div>
                     <div class="q-pa-md">
+                        <menu-operario :operator="operator" :show="menuOperator" @handleCloseMenuOperator="handleCloseMenuOperator"/>
                         <q-table
-                          style="height: 400px; max-width: 500px;"
-                          flat bordered
-                          title="Operadores"
-                          :rows="operators"
-                          :columns="columnOperators"
-                          row-key="index"
-                          virtual-scroll
+                            class="my-sticky-column-table"
+                            style="height: 400px; max-width: 500px;"
+                            flat bordered
+                            title="Operadores"
+                            :rows="operators"
+                            :columns="columnOperators"
+                            row-key="index"
+                            virtual-scroll
+                            @row-click="onRowClick"
                         />
                     </div>
                 </div>
@@ -57,12 +60,16 @@
     </template>
 
 <script>
+import MenuOperario from "src/components/MenuOperator.vue"
 import { useRoute } from "vue-router"
 import { api } from "src/boot/axios";
 import { ref } from "vue"
 import { api_base_backend } from "../helpers.js"
 
 export default {
+    components: {
+        MenuOperario
+    },
     setup () {
         const route = useRoute()
         const {params} = route;
@@ -71,6 +78,18 @@ export default {
         const empresa = ref(null)
         const empresaNoExiste = ref(false)
         const operators = ref([])
+        
+        const menuOperator = ref(false)
+        const operator = ref(null)
+
+        const onRowClick = (evt, row) => {
+            menuOperator.value = true
+            operator.value = row
+        };
+
+        const handleCloseMenuOperator = () => {
+            menuOperator.value = false
+        }
 
         const columnOperators = [
             { name: 'cedula', label: 'Cédula', field: 'cedula', align: 'left' },
@@ -78,8 +97,7 @@ export default {
             { name: 'autorizado', label: 'Autorizado', field: 'autorizado', align: 'left' },
             { name: 'cargo', label: 'Cargo', field: 'cargo', align: 'left' }
         ];
-
-
+        
         api.get(`admin/enterprises/${params.slug}`).then((response) => {
             empresa.value = response.data.enterprise
             operators.value = response.data.operators
@@ -95,6 +113,10 @@ export default {
         return {isLoading, empresa, empresaNoExiste, api_base_backend,
             columnOperators,
             operators,
+            onRowClick,
+            handleCloseMenuOperator,
+            menuOperator,
+            operator,
             pagination: ref({
                 rowsPerPage: 0
             })

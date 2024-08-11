@@ -1,8 +1,8 @@
 <template>
-  <q-layout view="hHh Lpr lff" style="padding: 10px 10px;">
+  <q-layout view="hHh Lpr lff" padding="10">
     
     <menu-toolbar-layout>
-        <router-view/>
+        <router-view />
     </menu-toolbar-layout>
   </q-layout>
 </template>
@@ -23,3 +23,4 @@ watch(() => {
 })
 
 </script>
+

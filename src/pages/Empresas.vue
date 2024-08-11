@@ -14,78 +14,42 @@
       </q-input>
 
       <q-toolbar class="row reverse">
-         <q-btn flat bordered @click="enterpriseCreate = true">
-            <q-avatar icon="mdi-plus-circle-outline" />
-         </q-btn>
-         <q-dialog v-model="enterpriseCreate" >
-           <q-card style="width: 900px;">
-             <q-card-section>
-               <div class="text-h6">Crear Empresa</div>
-             </q-card-section>
-
-             <q-card-section class="q-pt-none">
-                <q-form @submit.prevent="handleCreateEnteprise">
-                  <q-input name="RUT" label="RUT" v-model="dataCreateEnteprise.RUT"/>
-                  <q-input name="nombre" label="nombre" v-model="dataCreateEnteprise.nombre"/>
-                  <q-checkbox v-model="dataCreateEnteprise.valid" label="Verificado" />
-
-                  <q-file color="teal" filled label="image" v-model="dataCreateEnteprise.image">
-                    <template v-slot:prepend>
-                      <q-icon name="cloud_upload" />
-                    </template>
-                  </q-file>
-
-
-                  <q-btn label="Crear" class="q-mt-md" type="submit" color="primary"/>
-                </q-form>
-             </q-card-section>
-
-             <q-card-actions align="right">
-               <q-btn flat label="Cerrar" color="primary" v-close-popup />
-             </q-card-actions>
-           </q-card>
-         </q-dialog>
-
+         <create-empresa/>
       </q-toolbar>
-      
    </q-toolbar>
 
    <div v-if="!isLoading" class="q-pa-md row justify-center">
       <div v-for="empresa in empresas" :key="empresa.id">
-         <boton-empresas :empresa="empresa"/>
+         <card-empresas :empresa="empresa"/>
       </div>
    </div>
    <div v-if="isLoading" class="text-center">loading ...</div>
 </template>
 
 <script>
-import BotonEmpresas from 'src/components/BotonEmpresas.vue';
+import CardEmpresas from 'src/components/CardEmpresas.vue';
+import CreateEmpresa from "src/components/CreateEmpresa.vue"
+import { useEnterpriseStore } from "src/store/enterprise.store" 
 import { api } from "src/boot/axios";
-import { reactive, ref } from "vue";
+import { ref, computed } from "vue";
 
 export default {
    components: {
-      BotonEmpresas
+      CardEmpresas,
+      CreateEmpresa
    }, setup () {
+      const enterpriseStore = useEnterpriseStore()
       const search = ref("");
-      const enterpriseCreate = ref(false);
+
       const isLoading = ref(true)
-      const empresas = ref(null)
+      const empresas = computed(() => enterpriseStore.getEnterprise.reverse())
 
-      const dataCreateEnteprise = reactive({
-         nombre: "", RUT: "", valid: false, image: null
-      })
-
-      api.get("enterprises").then((response) => {
+      api.get("admin/enterprises").then((response) => {
          isLoading.value = false
-         empresas.value = response.data
+         enterpriseStore.setEnterprises(response.data)
       })
 
-      const handleCreateEnteprise = () => {
-         console.log(dataCreateEnteprise.image)
-      }
-
-      return {isLoading, empresas, search, enterpriseCreate, handleCreateEnteprise, dataCreateEnteprise}
+      return {isLoading, empresas, search }
    }
 }
 

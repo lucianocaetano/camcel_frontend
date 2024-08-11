@@ -11,10 +11,10 @@
     </q-card-section>
     <q-card-section class="text-right row items-center justify-between"> 
       <div class="text-caption text-grey">
-        {{ empresa.is_valid === 1? "Verificado" : "No verificado" }} 
+        {{ empresa.verificado ? "Verificado" : "No verificado" }} 
         <q-icon
-          :name="empresa.is_valid === 1 ? 'check_circle' : 'cancel'"
-          :color="empresa.is_valid === 1? 'green' : 'red'"
+          :name="empresa.verificado ? 'check_circle' : 'cancel'"
+          :color="empresa.verificado ? 'green' : 'red'"
           size="30px"
         />
       </div>
@@ -31,6 +31,7 @@ import { api_base_backend } from "../helpers.js"
 export default {
   props: ["empresa"],
   setup() {
+
     return {api_base_backend}
   }
 }

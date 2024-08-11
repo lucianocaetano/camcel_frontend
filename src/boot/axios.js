@@ -38,7 +38,8 @@ api.interceptors.response.use(function (config) {
   return config;
 }, function (error) {
   const userStore = useUserStore()
-  
+
+  console.error(error)
   if(error?.response?.status === 401) {
     userStore.setAuth(false)
   }

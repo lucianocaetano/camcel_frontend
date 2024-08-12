@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 import {useUserStore} from 'src/store/user.store'
-import {useRouter} from 'vue-router'
+import { Notify } from 'quasar';
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -28,7 +28,6 @@ api.interceptors.request.use(function (config) {
   const userStore = useUserStore()
 
   if (userStore.getToken){
-    console.log(userStore.getToken)
     config.headers.Authorization = `Bearer ${userStore.getToken}`
   }
 
@@ -39,9 +38,17 @@ api.interceptors.response.use(function (config) {
   return config;
 }, function (error) {
   const userStore = useUserStore()
-  if(error.response.status === 401) {
+
+  console.error(error)
+  if(error?.response?.status === 401) {
     userStore.setAuth(false)
   }
+
+  Notify.create({
+    type: 'negative',
+    message: 'An error occurred: ' + error.message
+  });
+  
   return Promise.reject(error);
 });
 export { api }

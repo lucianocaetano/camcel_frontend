@@ -9,14 +9,13 @@ export const useEnterpriseStore = defineStore('enterprise', {
       this.enterprises = enterprises
       localStorage.setItem("enterprise", JSON.stringify(this.enterprises))
     },
+    removeEnterprise(slug) {
+      this.enterprises = this.enterprises.filter((item) => item.slug !== slug)
+      localStorage.setItem("enterprise", JSON.stringify(this.enterprises))
+    },
     addEnterprise(enterprise) {
       this.enterprises.push(enterprise)
       localStorage.setItem("enterprise", JSON.stringify(this.enterprises))
     }
   },
-  getters: {
-    getEnterprise() {
-      return this.enterprises 
-    }
-  }
 })

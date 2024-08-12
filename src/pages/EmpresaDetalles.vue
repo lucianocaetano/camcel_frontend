@@ -1,37 +1,48 @@
 <template>
     <div v-if="!isLoading && !empresaNoExiste" class="q-mx-auto" style="max-width: 1000px;">
-        <q-img :src="api_base_backend+empresa.image" style=" height: 350px;" :fit="mode">
+        <q-img :src="api_base_backend+empresa.image" alt="esta empresa no pose imagen"  style=" height: 350px;" :fit="mode">
+            <template v-slot:error>
+                <div class="absolute-full text-subtitle2 flex flex-center">
+                    <h4 class="text-h4">
+                        {{empresa.nombre}}
+                    </h4>
+                </div>
+            </template>
             <div class="absolute-full text-subtitle2 flex flex-center">
                 <h4 class="text-h4">
                     {{empresa.nombre}}
                 </h4>
             </div>
         </q-img>
-        <div class="row justify-between" style="margin-top: 20px;">
+        <div class="row justify-between">
             <div class="text-caption">
-                <p class="text-grey">
+                <div class="text-grey row items-center">
                     {{ empresa.is_valid === 1? "Verificado" : "No verificado" }} 
                     <q-icon
                         :name="empresa.is_valid === 1 ? 'check_circle' : 'cancel'"
                         :color="empresa.is_valid === 1? 'green' : 'red'"
                         size="30px"
                     />
-                </p>
+                    <q-card-section class="q-pt-none">
+                        <q-form class="flex justify-left">
+                            <q-btn label="Editar" class="q-mt-md q-mr-sm" type="submit" color="primary"/>
+                            <q-btn label="Borrar" class="q-mt-md" type="button" color="negative" @click="handleRemoveEnterprise"/>
+                        </q-form>
+                    </q-card-section>
+                </div>
                 <div>
-                    <div class="q-pa-md">
-                        <menu-operario :operator="operator" :show="menuOperator" @handleCloseMenuOperator="handleCloseMenuOperator"/>
-                        <q-table
-                            class="my-sticky-column-table"
-                            style="height: 400px; max-width: 500px;"
-                            flat bordered
-                            title="Operadores"
-                            :rows="operators"
-                            :columns="columnOperators"
-                            row-key="index"
-                            virtual-scroll
-                            @row-click="onRowClick"
-                        />
-                    </div>
+                    <menu-operario :operator="operator" :show="menuOperator" @handleCloseMenuOperator="handleCloseMenuOperator"/>
+                    <q-table
+                        class="my-sticky-column-table"
+                        style="height: 400px; max-width: 500px;"
+                        flat bordered
+                        title="Operadores"
+                        :rows="operators"
+                        :columns="columnOperators"
+                        row-key="index"
+                        virtual-scroll
+                        @row-click="onRowClick"
+                    />
                 </div>
             </div>
             <div style="width: 400px;">
@@ -61,10 +72,11 @@
 
 <script>
 import MenuOperario from "src/components/MenuOperator.vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { api } from "src/boot/axios";
 import { ref } from "vue"
 import { api_base_backend } from "../helpers.js"
+import { useEnterpriseStore } from "src/store/enterprise.store.js";
 
 export default {
     components: {
@@ -72,6 +84,8 @@ export default {
     },
     setup () {
         const route = useRoute()
+        const router = useRouter()
+        const enterpriseStore = useEnterpriseStore()
         const {params} = route;
 
         const isLoading = ref(true)
@@ -86,6 +100,16 @@ export default {
             menuOperator.value = true
             operator.value = row
         };
+
+
+        const handleRemoveEnterprise = () => {
+            api.delete(`admin/enterprises/${params.slug}`).then((response) => {
+                if(response.status === 200) {
+                    enterpriseStore.removeEnterprise(params.slug)
+                    router.push("/empresas")
+                }
+            })
+        }
 
         const handleCloseMenuOperator = () => {
             menuOperator.value = false
@@ -115,6 +139,7 @@ export default {
             operators,
             onRowClick,
             handleCloseMenuOperator,
+            handleRemoveEnterprise,
             menuOperator,
             operator,
             pagination: ref({

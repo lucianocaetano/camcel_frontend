@@ -41,6 +41,7 @@ export default {
     const handleClose = () => {
       emit("handleCloseMenuOperator")
     }
+
     return {show, handleClose, operator}
   }
 }

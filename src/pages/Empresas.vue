@@ -44,7 +44,7 @@ export default {
       const isLoading = ref(true)
       const empresas = ref(null)
 
-      api.get("enterprises").then((response) => {
+      api.get("admin/enterprises").then((response) => {
          isLoading.value = false
          empresas.value = response.data
       })

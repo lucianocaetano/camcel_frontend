@@ -31,6 +31,7 @@ import { api_base_backend } from "../helpers.js"
 export default {
   props: ["empresa"],
   setup() {
+
     return {api_base_backend}
   }
 }

@@ -35,6 +35,15 @@ export const useUserStore = defineStore('user', {
     setUser(user) {
       localStorage.setItem("user", user)
       this.user = user;
-    },    
+    },  
+    clearSession() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      this.token = null;
+      this.user = null;
+    },
+    logout() {
+      this.setAuth(false); // Esto también llamará a clearSession() si auth es falso
+    }  
   },
 });

@@ -1,0 +1,17 @@
+
+[
+    {
+      "id": 1,
+      "nombre": "Reunión de equipo",
+      "empresa": "TechCorp",
+      "descripcion": "Reunión semanal para discutir proyectos en curso",
+      "fecha": "2024-08-06"
+    },
+    {
+      "id": 2,
+      "nombre": "Entrenamiento de seguridad",
+      "empresa": "Seguridad S.A.",
+      "descripcion": "Entrenamiento obligatorio para empleados sobre protocolos de seguridad",
+      "fecha": "2024-08-07"
+    }
+  ]

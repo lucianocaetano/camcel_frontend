@@ -33,9 +33,9 @@
 <script>
 import CardEmpresas from 'src/components/CardEmpresas.vue';
 import CreateEmpresa from "src/components/CreateEmpresa.vue"
-import { useEnterpriseStore } from "src/store/enterprise.store" 
+import { useEnterpriseStore } from "src/store/enterprise.store"
 import { api } from "src/boot/axios";
-import { ref, computed, warn, watch } from "vue";
+import { ref, computed } from "vue";
 
 export default {
    components: {
@@ -47,7 +47,7 @@ export default {
 
       const enterpriseCreate = ref(false);
       const isLoading = ref(true)
-      const empresas = computed(() => enterpriseStore.$state.enterprises)
+      const empresas = computed(() => enterpriseStore.enterprises)
 
       const handleCloseCreateEnterprise = () => {
          enterpriseCreate.value = false
@@ -59,7 +59,7 @@ export default {
       })
 
       return {isLoading, empresas, search, enterpriseCreate, handleCloseCreateEnterprise}
-      
+
    }
 }
 

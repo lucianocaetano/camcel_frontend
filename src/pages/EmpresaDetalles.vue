@@ -17,7 +17,7 @@
         <div class="row justify-between">
             <div class="text-caption">
                 <div class="text-grey row items-center">
-                    {{ empresa.is_valid === 1? "Verificado" : "No verificado" }} 
+                    {{ empresa.is_valid === 1? "Verificado" : "No verificado" }}
                     <q-icon
                         :name="empresa.is_valid === 1 ? 'check_circle' : 'cancel'"
                         :color="empresa.is_valid === 1? 'green' : 'red'"
@@ -59,7 +59,7 @@
         </div>
     </div>
     <div v-if="isLoading" class="text-center">
-        loading... 
+        loading...
     </div>
 
     <div v-if="empresaNoExiste" class="row justify-center">
@@ -67,7 +67,7 @@
             no existe esta empresa
            <q-icon name="warning" size="50px" color="warning"/>
         </h4>
-    </div> 
+    </div>
     </template>
 
 <script>
@@ -92,7 +92,7 @@ export default {
         const empresa = ref(null)
         const empresaNoExiste = ref(false)
         const operators = ref([])
-        
+
         const menuOperator = ref(false)
         const operator = ref(null)
 
@@ -100,7 +100,6 @@ export default {
             menuOperator.value = true
             operator.value = row
         };
-
 
         const handleRemoveEnterprise = () => {
             api.delete(`admin/enterprises/${params.slug}`).then((response) => {
@@ -121,8 +120,9 @@ export default {
             { name: 'autorizado', label: 'Autorizado', field: 'autorizado', align: 'left' },
             { name: 'cargo', label: 'Cargo', field: 'cargo', align: 'left' }
         ];
-        
+
         api.get(`admin/enterprises/${params.slug}`).then((response) => {
+            console.log(response)
             empresa.value = response.data.enterprise
             operators.value = response.data.operators
             isLoading.value = false

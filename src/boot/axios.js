@@ -48,7 +48,7 @@ api.interceptors.response.use(function (config) {
     type: 'negative',
     message: 'An error occurred: ' + error.message
   });
-  
+
   return Promise.reject(error);
 });
 export { api }

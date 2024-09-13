@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export const useUserStore = defineStore('counter', {
+export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem("token"),
     auth: localStorage.getItem("auth"),
@@ -35,6 +35,15 @@ export const useUserStore = defineStore('counter', {
     setUser(user) {
       localStorage.setItem("user", user)
       this.user = user;
-    },    
+    },  
+    clearSession() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      this.token = null;
+      this.user = null;
+    },
+    logout() {
+      this.setAuth(false); // Esto también llamará a clearSession() si auth es falso
+    }  
   },
 });

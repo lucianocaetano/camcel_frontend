@@ -7,8 +7,6 @@ const routes = [
     ]
   },
 
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/error/',
     component: () => import('layouts/MainLayout.vue'),

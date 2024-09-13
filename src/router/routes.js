@@ -47,10 +47,10 @@ const routes = [
       { path: '', component: () => import('src/pages/Documentos.vue') }
     ]
   }, {
-    path: '/calendario/',
+    path: '/trabajos/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/Calendario.vue') }
+      { path: '', component: () => import('src/pages/Trabajo.vue') }
     ]
   }, {
     path: '/soporte/',

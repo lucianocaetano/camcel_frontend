@@ -94,7 +94,7 @@ const botones = ref([
     {nombre:"Usuarios",icono:"mdi-account-multiple-outline",pagina:"/usuarios" },
     {nombre:"Descargas",icono:"mdi-download",pagina:"/desargas" },
     {nombre:"His.Trabajo",icono:"mdi-folder-multiple",pagina:"/his.trabajo" },
-    {nombre:"Calendario",icono:"mdi-calendar",pagina:"/calendario" },
+    {nombre:"Trabajos",icono:"mdi-account-hard-hat",pagina:"/trabajos" },
     {nombre:"Soporte",icono:"mdi-cog-outline",pagina:"/soporte" },
     
     

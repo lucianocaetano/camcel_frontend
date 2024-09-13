@@ -1,171 +1,148 @@
 <template>
-    <q-page class="q-pa-md">
-      <div class="row">
-        <div class="col-6">
-          <q-btn @click="onPrev">Mes Anterior</q-btn>
-          <q-btn @click="onToday">Hoy</q-btn>
-          <q-btn @click="onNext">Siguiente Mes</q-btn>
-          
-          <div class="text-h6 q-mb-md">
-            Fecha: {{ formattedDate }}
+
+
+  <q-page>
+    <div class="ola q-mx-auto">
+    
+    <q-list bordered>
+      <q-item bordered>
+        <q-item-section class="col-2"> 
+          <q-item-label header>Nombre Empresa</q-item-label>
+        </q-item-section>
+        <q-item-section class="col-2"> 
+          <q-item-label header>Trabajo a realizar</q-item-label>
+        </q-item-section>
+        <q-item-section class="col-2 text-center"> 
+          <q-item-label header>Fecha</q-item-label>
+        </q-item-section>
+        <q-item-section class="col-1 text-center"> 
+          <q-item-label header>Hora de Entrada</q-item-label>
+        </q-item-section>
+        <q-item-section class="col-1 text-center"> 
+          <q-item-label header>Hora de Salida</q-item-label>
+        </q-item-section>
+        <q-item-section class="col-4 text-center"> 
+          <q-item-label header>Confirmación</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-list bordered>
+        <q-item >
+          <q-item-section class="col-12 text-center" > 
+            <q-btn  color="green" @click="registrar" class="col-12">Registrar trabajo</q-btn>
+          </q-item-section>
+        </q-item>
+      </q-list>
+      
+
+      <q-item v-for="(actividad, index) in actividadesFiltradas" :key="index" :class="{'bg-grey-4': index % 2 === 0}">
+        <q-item-section class="col-2"> 
+          {{ actividad.nombre }} 
+        </q-item-section>
+        <q-item-section class="col-2"> 
+          {{ actividad.trabajo }}
+        </q-item-section>
+        <q-item-section class="col-1 text-center"> 
+          {{ actividad.fecha }}
+        </q-item-section>
+        <q-item-section class="col-1 text-center">
+         
+            {{ actividad.horaEntrada }}
+          <!--  <q-btn v-if="!actividad.entradaConfirmada"  color="green" @click="marcarHoraActualEntrada(index)" class="q-mx-md"> Entro</q-btn> -->
+    
+        </q-item-section>
+        <q-item-section class="col-1 text-center">
+         
+            {{ actividad.horaSalida }}
+           <!-- <q-btn v-if="!actividad.salidaConfirmada" color="red" @click="marcarHoraActualSalida(index)" class="q-mx-md"> Salio</q-btn> -->
+   
+        </q-item-section>
+        <q-item-section class="col-2 text-center">
+          <div>
+            <q-btn v-if="!actividad.confirmacionPREV" color="green" @click="confirmarPREV(index)" class="q-mx-auto">confirmar</q-btn>
+            <q-icon v-if="actividad.confirmacionPREV" name="mdi-check-circle" color="green" size="40px" style="padding-right: 20px;"> </q-icon>
+            
+            
           </div>
-          <q-calendar-month
-          ref="calendar"
-          v-model="selectedDate"
-          :date-type="dateType"
+          </q-item-section>
+          <q-item-section class="col-1 text-center">
           
-          :day-min-height="40"
-          locale=es
-          animated
-          bordered
-          @change="onChange"
-          @moved="onMoved"
-          @click-date="onClickDate"
-          @click-day="onClickDay"
-          @click-workweek="onClickWorkweek"
-          @click-head-workweek="onClickHeadWorkweek"
-          @click-head-day="onClickHeadDay"
-          :day-style="getDayStyle"
-        />
-        </div>
-        <div class="col-6">
-          <q-card style="height: 50vh;">
-            <q-card-section>
-              <div class="text-h6">Actividades para {{ selectedDate }}</div>
-              <q-list bordered padding>
-                <q-item
-                  v-for="(activity, index) in activities[selectedDate] || []"
-                  :key="index"
-                  clickable
-                  v-ripple
-                >
-                  <q-item-section>{{ activity }}</q-item-section>
-                  <q-item-section side>
-                    <q-btn dense icon="delete" @click="removeActivity(index)" />
-                  </q-item-section>
-                </q-item>
-              </q-list>
-              <div class="q-pa-sm">
-                <q-input
-                  v-model="newActivity"
-                  label="Nueva Actividad"
-                  outlined
-                  dense
-                  @keyup.enter="addActivity"
-                />
-                <q-btn
-                  class="q-mt-sm"
-                  label="Agregar Actividad"
-                  color="primary"
-                  @click="addActivity"
-                />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
-    </q-page>
-  </template>
-  
-  <script setup>
-  import { ref, computed, reactive } from 'vue';
-  import { QCalendarMonth, today } from '@quasar/quasar-ui-qcalendar/src/index.js'
-  import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.sass'
-  import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.sass'
-  import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass'
-import { event } from 'quasar';
+            
+            <q-icon v-if="actividad.confirmacionEmpresa" name="mdi-close-circle" color="green" size="40px" > </q-icon>
+            <q-icon v-if="!actividad.confirmacionEmpresa" name="mdi-close-circle" color="red" size="40px"> </q-icon>
+          
+        </q-item-section>
+        <q-item-section class="col-1 text-center">
+          <q-btn class="q-mx-auto" style="background-color: white;"> <q-icon name="mdi-text-box-search-outline" size="30px"></q-icon></q-btn>
+        </q-item-section>
+      </q-item> 
+    </q-list> 
+   </div>
+  </q-page>
+ 
+</template>
 
-  const selectedDate = ref(new Date().toISOString().slice(0, 10)); // Fecha actual en formato ISO (YYYY-MM-DD)
-  const newActivity = ref('');
-  const activities = reactive({});
-  
-  
-  const formattedDate = selectedDate;
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
+const actividades = ref([
+  { nombre: "Los Pinos", trabajo: "Revisar sistema eléctrico", horaEntrada: "8:00", horaSalida: "17:00", fecha: "2024-09-2", completada: false, confirmacionPREV: false, confirmacionEmpresa: true },
+  { nombre: "El Roble", trabajo: "Reparar sistema de agua", horaEntrada: "9:00", horaSalida: "18:00", fecha: "2024-09-6", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Industria Metalúrgica", trabajo: "Mantenimiento de máquinas", horaEntrada: "7:30", horaSalida: "16:00", fecha: "2024-09-25", completada: false, confirmacionPREV: true, confirmacionEmpresa: true },
+  { nombre: "Colegio San Martín", trabajo: "Instalación de paneles solares", horaEntrada: "7:00", horaSalida: "15:00", fecha: "2024-09-26", completada: false, confirmacionPREV: true, confirmacionEmpresa: false },
+  { nombre: "Hospital Central", trabajo: "Reparación de generador", horaEntrada: "6:30", horaSalida: "14:30", fecha: "2024-08-27", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Taller Mecánico López", trabajo: "Reemplazo de luces fluorescentes", horaEntrada: "10:00", horaSalida: "19:00", fecha: "2024-08-28", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Fábrica de Plásticos", trabajo: "Inspección de seguridad", horaEntrada: "8:30", horaSalida: "17:30", fecha: "2024-08-29", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Universidad Nacional", trabajo: "Revisión de red eléctrica", horaEntrada: "7:45", horaSalida: "16:15", fecha: "2024-08-30", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Estación de Bomberos", trabajo: "Mantenimiento de equipo", horaEntrada: "7:00", horaSalida: "15:30", fecha: "2024-08-31", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Centro Comercial Las Flores", trabajo: "Instalación de cámaras de seguridad", horaEntrada: "9:00", horaSalida: "18:00", fecha: "2024-09-01", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Los Pinos", trabajo: "Revisar sistema eléctrico", horaEntrada: "8:00", horaSalida: "17:00", fecha: "2024-08-2", completada: false, confirmacionPREV: false, confirmacionEmpresa: true },
+  { nombre: "El Roble", trabajo: "Reparar sistema de agua", horaEntrada: "9:00", horaSalida: "18:00", fecha: "2024-08-2", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Industria Metalúrgica", trabajo: "Mantenimiento de máquinas", horaEntrada: "7:30", horaSalida: "16:00", fecha: "2024-08-25", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Colegio San Martín", trabajo: "Instalación de paneles solares", horaEntrada: "7:00", horaSalida: "15:00", fecha: "2024-08-26", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Hospital Central", trabajo: "Reparación de generador", horaEntrada: "6:30", horaSalida: "14:30", fecha: "2024-08-27", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Taller Mecánico López", trabajo: "Reemplazo de luces fluorescentes", horaEntrada: "10:00", horaSalida: "19:00", fecha: "2024-08-28", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Fábrica de Plásticos", trabajo: "Inspección de seguridad", horaEntrada: "8:30", horaSalida: "17:30", fecha: "2024-08-29", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Universidad Nacional", trabajo: "Revisión de red eléctrica", horaEntrada: "7:45", horaSalida: "16:15", fecha: "2024-08-30", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Estación de Bomberos", trabajo: "Mantenimiento de equipo", horaEntrada: "7:00", horaSalida: "15:30", fecha: "2024-08-31", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Centro Comercial Las Flores", trabajo: "Instalación de cámaras de seguridad", horaEntrada: "9:00", horaSalida: "18:00", fecha: "2024-09-04", completada: false, confirmacionPREV: false, confirmacionEmpresa: false }
+]);
 
+const actividadesFiltradas = computed(() => {
+  const hoy = new Date().toISOString().split('T')[0]; 
+  return actividades.value.filter(actividad => actividad.fecha >= hoy);
+});
 
-  
-  function addActivity() {
-    if (newActivity.value.trim()) {
-      if (!activities[selectedDate.value]) {
-        activities[selectedDate.value] = [];
-      }
-      activities[selectedDate.value].push(newActivity.value);
-      newActivity.value = '';
-     
-    }
-  }
-  
-  function removeActivity(index) {
-    activities[selectedDate.value].splice(index, 1);
-  }
-  const calendar = ref(null);
-
-const dateType = ref('square');
-
-const onToday = () => {
-  if (calendar.value) {
-    calendar.value.moveToToday();
-  }
-};
-
-const getDayStyle = (timestamp) => {
-  if (activities[timestamp.date]) {
-    return {
-      backgroundColor: 'blue',
-      color: 'white'
-    };
-  }
-  return {};
-};
-
-
-const onPrev = () => {
-  if (calendar.value) {
-    calendar.value.prev();
-  }
-};
-
-const onNext = () => {
-  if (calendar.value) {
-    calendar.value.next();
-  }
-};
-
-const onMoved = (data) => {
-  console.log('onMoved', data);
-};
-
-const onChange = (data) => {
-  console.log('onChange', data);
-};
-
-const onClickDate = (data) => {
-  console.log('onClickDate', data);
-};
-
-const onClickDay = (data) => {
-  console.log('onClickDay', data);
-};
-
-const onClickWorkweek = (data) => {
-  console.log('onClickWorkweek', data);
-};
-
-const onClickHeadDay = (data) => {
-  console.log('onClickHeadDay', data);
-};
-
-const onClickHeadWorkweek = (data) => {
-  console.log('onClickHeadWorkweek', data);
-};
-  </script>
-
-<style scoped> 
-
-.active-day {
-  background-color: #42A5F5; /* Un tono de azul */
-  color: white; /* Cambia el color del texto si es necesario */
-  border-radius: 4px; /* Redondear los bordes si se desea */
+function confirmarHoraEntrada(index) {
+  actividades.value[index].entradaConfirmada = true;
+}
+const borrarActividadesFiltradas = () =>{
+  const hoy = new Date().toISOString().split('T')[0];
+  actividades.value = actividades.value.filter(actividad => actividad.fecha >= hoy);
 }
 
+function marcarHoraActualEntrada(index) {
+  const ahora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  actividades.value[index].horaEntrada = ahora;
+  actividades.value[index].entradaConfirmada = true;
+}
+
+function confirmarHoraSalida(index) {
+  actividades.value[index].salidaConfirmada = true;
+}
+
+
+onMounted(()=>{borrarActividadesFiltradas();});
+
+
+</script>
+<style scoped>
+
+
+@media only screen and (max-width: 1022px) {
+.ola{
+  overflow-x: scroll;
+  width: 900px;
+}
+}
+  
 </style>

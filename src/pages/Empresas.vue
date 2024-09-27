@@ -23,7 +23,7 @@
    </q-toolbar>
 
    <div v-if="!isLoading" class="q-pa-md row justify-center">
-      <div v-for="empresa in empresas.reverse()" :key="empresa.id">
+      <div v-for="empresa in empresas" :key="empresa.id">
          <card-empresas :empresa="empresa"/>
       </div>
    </div>

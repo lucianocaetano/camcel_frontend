@@ -16,6 +16,8 @@
              </template>
            </q-file>
 
+           <p v-if="isLoadingUser">loading...</p>
+           <q-select v-else v-model="dataCreateEnterprise.user_id" option-value="id" option-label="name" :options="user" label="Standard" />
            <q-btn label="Crear" class="q-mt-md" type="submit" color="primary"/>
          </q-form>
       </q-card-section>
@@ -28,7 +30,7 @@
 </template>
 
 <script>
-import { reactive, toRef } from "vue"
+import { reactive, toRef, ref } from "vue"
 import { api } from "src/boot/axios";
 import { useEnterpriseStore } from "src/store/enterprise.store";
 
@@ -42,10 +44,19 @@ export default {
   setup(props, { emit }) {
     const enterpriseStore = useEnterpriseStore()
 
+    const isLoadingUser = ref(true)
+    const user = ref(null)
+
+    api.get("admin/businessmen").then((response) => {
+        isLoadingUser.value = false
+
+        user.value = response.data
+    })
+
     const show = toRef(props, "show")
 
     const dataCreateEnterprise = reactive({
-      nombre: "", RUT: "", is_valid: false, image: undefined, user_id: null
+      nombre: "", RUT: "", is_valid: false, image: null, user_id: null
     })
 
     const handleCloseCreateEnterprise = () => {
@@ -53,13 +64,13 @@ export default {
     }
 
     const handleCreateEnterprise = () => {
-      api.post("admin/enterprises", dataCreateEnterprise).then((response) => {
+        api.post("admin/enterprises", {...dataCreateEnterprise, user_id: dataCreateEnterprise.user_id.id}).then((response) => {
         enterpriseStore.addEnterprise(response.data.enterprise)
         handleCloseCreateEnterprise()
       })
     }
 
-    return {dataCreateEnterprise, handleCreateEnterprise, show, handleCloseCreateEnterprise}
+    return {dataCreateEnterprise, handleCreateEnterprise, show, handleCloseCreateEnterprise, isLoadingUser, user}
   }
 }
 </script>

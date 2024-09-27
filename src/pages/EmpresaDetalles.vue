@@ -30,20 +30,7 @@
                         </q-form>
                     </q-card-section>
                 </div>
-                <div>
-                    <menu-operario :operator="operator" :show="menuOperator" @handleCloseMenuOperator="handleCloseMenuOperator"/>
-                    <q-table
-                        class="my-sticky-column-table"
-                        style="height: 400px; max-width: 500px;"
-                        flat bordered
-                        title="Operadores"
-                        :rows="operators"
-                        :columns="columnOperators"
-                        row-key="index"
-                        virtual-scroll
-                        @row-click="onRowClick"
-                    />
-                </div>
+
             </div>
             <div style="width: 400px;">
                 <h5 class="text-h5 q-my-none">Encargado de la empresa</h5>
@@ -57,6 +44,21 @@
                 </q-card>
             </div>
         </div>
+        <div class="q-mt-md">
+            <menu-operario :operator="operator" :show="menuOperator" @handleCloseMenuOperator="handleCloseMenuOperator"/>
+            <q-table
+                class="my-sticky-column-table"
+                style="height: 400px; width: 100%;"
+                flat bordered
+                title="Operadores"
+                :rows="operators"
+                :columns="columnOperators"
+                row-key="index"
+                virtual-scroll
+                @row-click="onRowClick"
+            />
+        </div>
+
     </div>
     <div v-if="isLoading" class="text-center">
         loading...

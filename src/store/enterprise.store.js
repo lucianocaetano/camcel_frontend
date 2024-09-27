@@ -14,7 +14,7 @@ export const useEnterpriseStore = defineStore('enterprise', {
       localStorage.setItem("enterprise", JSON.stringify(this.enterprises))
     },
     addEnterprise(enterprise) {
-      this.enterprises.push(enterprise)
+      this.enterprises.unshift(enterprise)
       localStorage.setItem("enterprise", JSON.stringify(this.enterprises))
     }
   },

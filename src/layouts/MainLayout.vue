@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr lff" padding="10">
-    
+
     <menu-toolbar-layout>
         <router-view />
     </menu-toolbar-layout>

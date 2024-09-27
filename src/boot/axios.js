@@ -39,15 +39,14 @@ api.interceptors.response.use(function (config) {
 }, function (error) {
   const userStore = useUserStore()
 
-  console.error(error)
   if(error?.response?.status === 401) {
     userStore.setAuth(false)
+  }else{
+    Notify.create({
+        type: 'negative',
+        message: 'An error occurred: ' + error.message
+    });
   }
-
-  Notify.create({
-    type: 'negative',
-    message: 'An error occurred: ' + error.message
-  });
 
   return Promise.reject(error);
 });

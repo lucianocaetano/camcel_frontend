@@ -41,7 +41,7 @@
         <q-item-section class="col-2"> 
           {{ actividad.trabajo }}
         </q-item-section>
-        <q-item-section class="col-1 text-center"> 
+        <q-item-section class="col-2 text-center"> 
           {{ actividad.fecha }}
         </q-item-section>
         <q-item-section class="col-1 text-center">

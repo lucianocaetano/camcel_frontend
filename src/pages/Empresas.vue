@@ -23,9 +23,14 @@
    </q-toolbar>
 
    <div v-if="!isLoading" class="q-pa-md row justify-center">
-      <div v-for="empresa in empresas" :key="empresa.id">
-         <card-empresas :empresa="empresa"/>
-      </div>
+    <v-template  v-for="empresa in empresas" :key="empresa.id">
+         <div v-if="search !== ''">
+                 <card-empresas :empresa="empresa" v-if="empresa.nombre.match(search)"/>
+              </div>
+              <div v-else>
+                <card-empresas :empresa="empresa"/>
+              </div>
+    </v-template>
    </div>
    <div v-if="isLoading" class="text-center">loading ...</div>
 </template>

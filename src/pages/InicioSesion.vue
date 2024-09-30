@@ -39,6 +39,9 @@
   const router = useRouter()
   const userStore = useUserStore()
 
+  if(userStore.auth){
+    router.push("/")
+  }
 
   const email = ref("")
   const suffix = ref("@gmail.com")

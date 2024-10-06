@@ -9,6 +9,7 @@
       </div>
      
       <div class="row">
+        <notificaciones/>
         <chat/>
         <q-btn flat icon="person">
           <q-menu>
@@ -71,7 +72,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import Chat from 'src/components/Chat.vue' // Ajusta la ruta según la ubicación real de Chat.vue
+import Chat from 'src/components/Chat.vue'
+import notificaciones from 'src/components/Notificaciones.vue' 
 import { useRouter } from "vue-router"
 import { useUserStore } from 'src/store/user.store.js'
 

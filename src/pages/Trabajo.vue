@@ -86,13 +86,13 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 const actividades = ref([
   { nombre: "Los Pinos", trabajo: "Revisar sistema eléctrico", horaEntrada: "8:00", horaSalida: "17:00", fecha: "2024-09-2", completada: false, confirmacionPREV: false, confirmacionEmpresa: true },
-  { nombre: "El Roble", trabajo: "Reparar sistema de agua", horaEntrada: "9:00", horaSalida: "18:00", fecha: "2024-09-6", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
-  { nombre: "Industria Metalúrgica", trabajo: "Mantenimiento de máquinas", horaEntrada: "7:30", horaSalida: "16:00", fecha: "2024-09-25", completada: false, confirmacionPREV: true, confirmacionEmpresa: true },
-  { nombre: "Colegio San Martín", trabajo: "Instalación de paneles solares", horaEntrada: "7:00", horaSalida: "15:00", fecha: "2024-09-26", completada: false, confirmacionPREV: true, confirmacionEmpresa: false },
+  { nombre: "El Roble", trabajo: "Reparar sistema de agua", horaEntrada: "9:00", horaSalida: "18:00", fecha: "2024-10-3", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Industria Metalúrgica", trabajo: "Mantenimiento de máquinas", horaEntrada: "7:30", horaSalida: "16:00", fecha: "2024-10-3", completada: false, confirmacionPREV: true, confirmacionEmpresa: true },
+  { nombre: "Colegio San Martín", trabajo: "Instalación de paneles solares", horaEntrada: "7:00", horaSalida: "15:00", fecha: "2024-10-03", completada: false, confirmacionPREV: true, confirmacionEmpresa: false },
   { nombre: "Hospital Central", trabajo: "Reparación de generador", horaEntrada: "6:30", horaSalida: "14:30", fecha: "2024-08-27", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
   { nombre: "Taller Mecánico López", trabajo: "Reemplazo de luces fluorescentes", horaEntrada: "10:00", horaSalida: "19:00", fecha: "2024-08-28", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
-  { nombre: "Fábrica de Plásticos", trabajo: "Inspección de seguridad", horaEntrada: "8:30", horaSalida: "17:30", fecha: "2024-08-29", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
-  { nombre: "Universidad Nacional", trabajo: "Revisión de red eléctrica", horaEntrada: "7:45", horaSalida: "16:15", fecha: "2024-08-30", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Fábrica de Plásticos", trabajo: "Inspección de seguridad", horaEntrada: "8:30", horaSalida: "17:30", fecha: "2024-10-3", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
+  { nombre: "Universidad Nacional", trabajo: "Revisión de red eléctrica", horaEntrada: "7:45", horaSalida: "16:15", fecha: "2024-10-3", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
   { nombre: "Estación de Bomberos", trabajo: "Mantenimiento de equipo", horaEntrada: "7:00", horaSalida: "15:30", fecha: "2024-08-31", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
   { nombre: "Centro Comercial Las Flores", trabajo: "Instalación de cámaras de seguridad", horaEntrada: "9:00", horaSalida: "18:00", fecha: "2024-09-01", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
   { nombre: "Los Pinos", trabajo: "Revisar sistema eléctrico", horaEntrada: "8:00", horaSalida: "17:00", fecha: "2024-08-2", completada: false, confirmacionPREV: false, confirmacionEmpresa: true },

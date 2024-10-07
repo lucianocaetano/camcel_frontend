@@ -25,7 +25,7 @@
    <div v-if="!isLoading" class="q-pa-md row justify-center">
     <v-template  v-for="empresa in empresas" :key="empresa.id">
          <div v-if="search !== ''">
-                 <card-empresas :empresa="empresa" v-if="empresa.nombre.match(search)"/>
+                 <card-empresas :empresa="empresa" v-if="empresa.nombre.toLowerCase().match(search.toLowerCase())"/>
               </div>
               <div v-else>
                 <card-empresas :empresa="empresa"/>

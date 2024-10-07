@@ -1,25 +1,30 @@
 import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem("token"),
     auth: localStorage.getItem("auth")? true: false,
     user: localStorage.getItem("user"),
+    users: [] // Aquí agregamos la lista de usuarios
   }),
   getters: {
     getToken() {
-      return this.token
+      return this.token;
     },
-    getUser(){
-      return this.user
+    getUser() {
+      return this.user;
     },
-    getAuth(){
-      return this.auth
+    getAuth() {
+      return this.auth;
+    },
+    getUsers() {
+      return this.users; // Nuevo getter para acceder a la lista de usuarios
     }
   },
   actions: {
     setToken(token) {
-      localStorage.setItem("token", token)
+      localStorage.setItem("token", token);
       this.token = token;
     },
     setAuth(auth) {

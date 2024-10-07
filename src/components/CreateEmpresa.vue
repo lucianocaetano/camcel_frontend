@@ -17,7 +17,7 @@
            </q-file>
 
            <p v-if="isLoadingUser">loading...</p>
-           <q-select v-else v-model="dataCreateEnterprise.user_id" option-value="id" option-label="name" :options="user" label="Standard" />
+           <q-select v-else v-model="dataCreateEnterprise.user_id" option-label="name" :options="user" label="Standard" />
            <q-btn label="Crear" class="q-mt-md" type="submit" color="primary"/>
          </q-form>
       </q-card-section>
@@ -49,7 +49,6 @@ export default {
 
     api.get("admin/businessmen").then((response) => {
         isLoadingUser.value = false
-
         user.value = response.data
     })
 
@@ -64,7 +63,13 @@ export default {
     }
 
     const handleCreateEnterprise = () => {
-        api.post("admin/enterprises", {...dataCreateEnterprise, user_id: dataCreateEnterprise.user_id.id}).then((response) => {
+        console.log(dataCreateEnterprise)
+      api.post("admin/enterprises",
+          {...dataCreateEnterprise, user_id: dataCreateEnterprise.user_id.id},
+          {
+            headers: dataCreateEnterprise.image ? { 'Content-Type': 'multipart/form-data' } : {'Content-Type': 'application/json'}
+          }
+      ).then((response) => {
         enterpriseStore.addEnterprise(response.data.enterprise)
         handleCloseCreateEnterprise()
       })

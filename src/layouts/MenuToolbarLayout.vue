@@ -9,7 +9,7 @@
       </div>
      
       <div class="row">
-        <notificaciones/>
+        <Notificaciones2/>
         <chat/>
         <q-btn flat icon="person">
           <q-menu>
@@ -76,6 +76,7 @@ import Chat from 'src/components/Chat.vue'
 import notificaciones from 'src/components/Notificaciones.vue' 
 import { useRouter } from "vue-router"
 import { useUserStore } from 'src/store/user.store.js'
+import Notificaciones2 from 'src/components/Notificaciones2.vue';
 
 const router = useRouter()
 const userStore = useUserStore()

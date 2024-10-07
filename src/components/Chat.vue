@@ -1,5 +1,5 @@
 <template>
-    <q-btn flat round dense icon="mdi-chat" @click="dialog = true">
+    <q-btn flat  icon="mdi-chat" @click="dialog = true">
         
          <q-dialog
           v-model="dialog"

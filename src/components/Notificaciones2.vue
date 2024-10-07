@@ -1,99 +1,75 @@
 <template>
-    <!-- Header -->
-    <div class="header">
-      <q-toolbar class="bg-grey-3 text-black">
-        <q-btn round flat>
-          <q-avatar>
-            <img :src="currentNotification.avatar">
-          </q-avatar>
-        </q-btn>
+    <!-- Botón para abrir la ventana emergente de notificaciones -->
+    <q-btn flat   icon="mdi-bell" @click="showNotifications = true"/>
   
-        <span class="q-subtitle-1 q-pl-md">
-          {{ currentNotification.title }}
-        </span>
+    <!-- Ventana emergente de notificaciones -->
+    <q-dialog v-model="showNotifications" persistent>
+      <q-card class="q-pa-md" style="min-width: 400px">
+        <q-toolbar class="bg-grey-3 text-black">
+          <q-toolbar-title>Notificaciones</q-toolbar-title>
   
-        <q-space />
+          <q-btn icon="close" flat round @click="showNotifications = false" />
+        </q-toolbar>
   
-        <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip class="bg-white text-primary">Close</q-tooltip>
-        </q-btn>
-      </q-toolbar>
-    </div>
-  
-    <!-- Sidebar / Drawer -->
-    <div class="Drawer">
-      <q-toolbar class="bg-grey-3">
-        <q-avatar class="cursor-pointer">
-          <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
-        </q-avatar>
-        <q-space />
-      </q-toolbar>
-  
-      <q-toolbar class="bg-grey-2">
-        <q-input rounded outlined dense class="WAL__field full-width" bg-color="white" v-model="search" placeholder="Search notifications">
+        <!-- Buscador de notificaciones -->
+        <q-input rounded outlined dense class="q-mb-md" bg-color="white" v-model="search" placeholder="Buscar notificaciones">
           <template v-slot:prepend>
             <q-icon name="search" />
           </template>
         </q-input>
-      </q-toolbar>
   
-      <q-scroll-area style="height: calc(100% - 100px)">
+        <!-- Lista de notificaciones -->
         <q-list>
           <q-item
-            v-for="(notification, index) in notifications"
+            v-for="(notification, index) in filteredNotifications"
             :key="notification.id"
             clickable
             v-ripple
-            @click="setCurrentNotification(index)"
+            @click="showNotificationDetails(index)"
           >
-            <q-item-section avatar>
-              <q-avatar>
-                <img :src="notification.avatar">
-              </q-avatar>
-            </q-item-section>
-  
             <q-item-section>
-              <q-item-label lines="1">
-                {{ notification.title }}
-              </q-item-label>
-              <q-item-label class="notification__summary" caption>
-                {{ notification.description }}
-              </q-item-label>
+              <q-item-label>{{ notification.title }}</q-item-label>
+              <q-item-label caption>{{ notification.description }}</q-item-label>
             </q-item-section>
   
             <q-item-section side>
-              <q-item-label caption>
-                {{ notification.time }}
-              </q-item-label>
+              <q-item-label caption>{{ notification.time }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
-      </q-scroll-area>
-    </div>
   
-    <!-- Notifications Area -->
-    <q-page-container class="bg-grey-5 notifications-area">
-      <q-scroll-area class="details-area">
-        <q-list>
-          <q-item v-for="(detail, index) in currentNotification.details" :key="index" class="notification-item">
+        <!-- Detalles de la notificación seleccionada -->
+        <q-card-section v-if="selectedNotification">
+          <q-separator spaced />
+          <q-item>
             <q-item-section>
-              <q-item-label>{{ detail.text }}</q-item-label>
+              <q-item-label>{{ selectedNotification.title }}</q-item-label>
+              <q-item-label caption>{{ selectedNotification.description }}</q-item-label>
             </q-item-section>
           </q-item>
-        </q-list>
-      </q-scroll-area>
-    </q-page-container>
+          <q-list>
+            <q-item v-for="(detail, index) in selectedNotification.details" :key="index">
+              <q-item-section>
+                <q-item-label>{{ detail.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </template>
   
   <script setup>
   import { ref, computed } from 'vue'
+  
+  // Controla la visibilidad de la ventana emergente
+  const showNotifications = ref(false)
   
   // Datos de ejemplo para las notificaciones
   const notifications = ref([
     {
       id: 1,
       title: 'Sistema Actualizado',
-      avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
       description: 'Se ha completado la actualización del sistema.',
       time: '15:00',
       details: [{ text: 'Se realizó la actualización a la versión 2.1.0' }]
@@ -101,68 +77,33 @@
     {
       id: 2,
       title: 'Nueva Función Agregada',
-      avatar: 'https://cdn.quasar.dev/team/dan_popescu.jpg',
       description: 'Se ha agregado una nueva función a tu panel de control.',
       time: '16:00',
       details: [{ text: 'La función de reportes ahora está disponible.' }]
     }
   ])
   
-  const currentNotificationIndex = ref(0)
-  const currentNotification = computed(() => {
-    return notifications.value[currentNotificationIndex.value]
+  const search = ref('') // Control del texto de búsqueda
+  const selectedNotification = ref(null) // Almacena la notificación seleccionada
+  
+  // Filtra las notificaciones basado en la búsqueda
+  const filteredNotifications = computed(() => {
+    return notifications.value.filter(notification => 
+      notification.title.toLowerCase().includes(search.value.toLowerCase())
+    )
   })
   
-  const search = ref('')
-  
-  function setCurrentNotification(index) {
-    currentNotificationIndex.value = index
+  // Muestra los detalles de la notificación seleccionada
+  function showNotificationDetails(index) {
+    selectedNotification.value = notifications.value[index]
   }
   </script>
   
   <style scoped>
-  .Drawer {
-    width: 25%;
-    height: 100%;
-    background-color: white;
-    color: #000;
-    top: 0%;
-    position: absolute;
-    z-index: 8;
-  }
-  
-  .header {
-    right: 0%;
-    top: 0;
-    width: 75%;
-    height: 8%;
-    position: absolute;
-    z-index: 10;
-  }
-  
-  .notifications-area {
-    width: 88%;
-    height: calc(100% - 9%);
-    position: absolute;
-    top: 0;
-    right: 0;
-    color: #000;
-  }
-  
-  .details-area {
-    height: 100%;
-    padding: 10px;
+  /* Ajustes simples de estilos para la ventana emergente */
+  .q-card {
+    max-height: 80vh;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .notification-item {
-    max-width: 50%;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 10px;
-    background-color: #f5f5f5;
   }
   </style>
   

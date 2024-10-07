@@ -4,6 +4,8 @@
           <q-card class="tarjeta col-10 ">
           <q-card-section class="formulario row justify-center items-center">
               <q-form @submit="onSubmit" @reset="onReset" class="col-10">
+               
+            
                 <q-input bottom-slots filled v-model="email" suffix="@gmail.com" label="Correo" counter maxlength="35" :dense="dense" ></q-input>
                 <q-input bottom-slots counter maxlength="20" v-model="password" label="Contraseña" filled :type="isPwd ? 'password' : 'text'" ></q-input>
   
@@ -25,14 +27,15 @@
   
   <script setup>
   import { ref } from 'vue'
-  
+ 
   import { useUserStore } from '../store/user.store'
  
   import { useRouter } from 'vue-router'
   import { api } from 'src/boot/axios';
+ 
   
   
-
+  const domainOptions = ['gmail.com', 'yahoo.com', 'outlook.com'];
   const router = useRouter()
   const userStore = useUserStore()
 

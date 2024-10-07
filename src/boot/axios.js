@@ -34,24 +34,10 @@ api.interceptors.request.use(function (config) {
   return config
 })
 
-
-api.interceptors.request.use(function (config) {
-  const userStore = useUserStore()
-
-  if (userStore.getToken){
-    config.headers.Authorization = `Bearer ${userStore.getToken}`
-  }
-
-  return config
-})
-
 api.interceptors.response.use(function (config) {
   return config;
 }, function (error) {
   const userStore = useUserStore()
-
-  console.error(error)
-  if(error?.response?.status === 401) {
 
   if(error?.response?.status === 401) {
     userStore.setAuth(false)
@@ -61,12 +47,6 @@ api.interceptors.response.use(function (config) {
         message: 'An error occurred: ' + error.message
     });
   }
-
-  Notify.create({
-    type: 'negative',
-    message: 'An error occurred: ' + error.message
-  });
-  
 
   return Promise.reject(error);
 });

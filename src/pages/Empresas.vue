@@ -15,11 +15,8 @@
 
       <q-toolbar class="row reverse">
          <q-btn flat bordered @click="enterpriseCreate = true">
-         <q-btn flat bordered @click="enterpriseCreate = true">
             <q-avatar icon="mdi-plus-circle-outline" />
          </q-btn>
-
-         <create-empresa v-if="enterpriseCreate" :show="enterpriseCreate" @handleCloseCreateEnterprise="handleCloseCreateEnterprise" />
 
          <create-empresa v-if="enterpriseCreate" :show="enterpriseCreate" @handleCloseCreateEnterprise="handleCloseCreateEnterprise" />
       </q-toolbar>
@@ -49,14 +46,9 @@ export default {
    components: {
       CardEmpresas,
       CreateEmpresa
-      CardEmpresas,
-      CreateEmpresa
    }, setup () {
       const enterpriseStore = useEnterpriseStore()
-      const enterpriseStore = useEnterpriseStore()
       const search = ref("");
-
-      const enterpriseCreate = ref(false);
 
       const enterpriseCreate = ref(false);
       const isLoading = ref(true)
@@ -67,13 +59,7 @@ export default {
       }
 
       api.get("admin/enterprises").then((response) => {
-      const handleCloseCreateEnterprise = () => {
-         enterpriseCreate.value = false
-      }
-
-      api.get("admin/enterprises").then((response) => {
          isLoading.value = false
-         enterpriseStore.setEnterprises(response.data)
          enterpriseStore.setEnterprises(response.data)
       })
 

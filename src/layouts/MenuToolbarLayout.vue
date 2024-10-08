@@ -7,7 +7,7 @@
           <q-toolbar-title>Camcel</q-toolbar-title>
         </q-toolbar>
       </div>
-     
+
       <div class="row">
         <q-btn flat icon="mdi-chat" />
         <q-btn flat icon="person">
@@ -21,17 +21,6 @@
               <q-item clickable v-close-popup>
                 <q-item-section>Empresa</q-item-section>
               </q-item>
-
-              <q-separator />
-              <q-item clickable v-close-popup>
-                <q-item-section>Documentos</q-item-section>
-              </q-item>
-
-              <q-separator />
-              <q-item clickable v-close-popup>
-                <q-item-section>Descargas</q-item-section>
-              </q-item>
-
               <q-separator />
               <q-item clickable v-close-popup>
                 <q-item-section>Configuracion</q-item-section>
@@ -46,7 +35,7 @@
         </q-btn>
       </div>
     </q-header>
-    
+
     <q-drawer
       v-model="drawer"
       show-if-above
@@ -96,13 +85,14 @@ const menuList = [
   {
     icon: 'business_center',
     label: 'Empresas',
-    href: "enterprises", 
-    separator: false 
+    href: "enterprises",
+    separator: false
   },
   {
-    icon: 'description',
-    label: 'Documentos',
-    separator: true 
+    icon: 'mdi-account',
+    label: 'Users',
+    href: "users",
+    separator: true
   },
   {
     icon: 'settings',

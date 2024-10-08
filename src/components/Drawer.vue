@@ -1,5 +1,4 @@
 <template>
-  {{console.log(drawer)}}
   <q-drawer
       v-model="drawer"
       show-if-above
@@ -29,7 +28,6 @@
 </template>
 
 <script>
-import { toRef } from "vue"
 
 export default {
   props: {

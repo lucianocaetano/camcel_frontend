@@ -21,6 +21,7 @@
     "recaptcha-v3": "^1.10.0",
     "vue": "^3.4.18",
     "vue-email-autocomplete": "^1.2.0",
+    "vue-mobile-detection": "^2.0.1",
     "vue-router": "^4.0.12",
     "vue-select": "^4.0.0-beta.6"
   },

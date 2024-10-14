@@ -76,6 +76,13 @@
     },
     {
       id: 2,
+      title: 'Electricista G&G',
+      description: 'Se ha registrado en el sistema',
+      time: '15:00',
+      details: [{ text: 'Registrado y esperando documentos..' }]
+    },
+    {
+      id: 3,
       title: 'Nueva Función Agregada',
       description: 'Se ha agregado una nueva función a tu panel de control.',
       time: '16:00',

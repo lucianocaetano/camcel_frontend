@@ -4,10 +4,28 @@
           <q-card class="tarjeta col-10 ">
           <q-card-section class="formulario row justify-center items-center">
               <q-form @submit="onSubmit" @reset="onReset" class="col-10">
-               
-            
-                <q-input bottom-slots filled v-model="email" suffix="@gmail.com" label="Correo" counter maxlength="35" :dense="dense" ></q-input>
-                <q-input bottom-slots counter maxlength="20" v-model="password" label="Contraseña" filled :type="isPwd ? 'password' : 'text'" ></q-input>
+               <div class="q-pa-md q-gutter-sm">
+              <div class="text-h4 text-center">
+                Login
+              </div>
+              </div>
+                <div class="q-pa-md">
+                <q-input filled v-model="email" type="email" placeholder="Correo"  :dense="dense" >
+                  
+                         
+                        <template v-slot:before>
+                          <q-icon name="mail" />
+                        </template>
+                        
+                      </q-input>
+                
+                   <q-input filled v-model="password" type="password"  :type="isPwd ? 'password' : 'text'" placeholder="Contraseña"  :dense="dense" style="padding-top: 10px">
+                      <template v-slot:before>
+                        <q-icon name="mdi-lock-outline" />
+                      </template>
+                      
+                   </q-input>
+                </div>
   
               <q-toggle v-model="licencia" label="Acepto los términos de licencia" class="q-mb-md"/>
       
@@ -34,25 +52,26 @@
   import { api } from 'src/boot/axios';
  
   
-  
-  const domainOptions = ['gmail.com', 'yahoo.com', 'outlook.com'];
+ 
+ 
   const router = useRouter()
   const userStore = useUserStore()
 
- 
+  const ph = ref('')
+  const dense = ref(false)
   const licencia = ref(false)
   const text= ref("")
   
   const email = ref("")
-  const suffix = ref("@gmail.com")
+  
   const password = ref("")
   
   const isPwd = ref(true)
-  const dense = ref(false)
+  
   
   const enviar = async () =>{
     api.post('auth/login', {
-      email: email.value + suffix.value,
+      email: email.value,
       password:password.value 
     })
     .then(function (response) {
@@ -91,7 +110,7 @@
       height: 100%;
   }
   .tarjeta {
-      height: 50%;
+      height: 60%;
        backdrop-filter: blur(40px);
        background-color: rgba(255, 255, 255, 0.3);
        box-shadow: 3px 3px 5px rgba(151, 175, 209, 0.5);

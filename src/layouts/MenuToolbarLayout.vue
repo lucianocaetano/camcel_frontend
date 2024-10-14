@@ -95,8 +95,7 @@ const search = ref('');
 const botones = ref([
     {nombre:"Empresas",icono:"mdi-office-building-cog-outline",pagina:"/" },
     {nombre:"Usuarios",icono:"mdi-account-multiple-outline",pagina:"/usuarios" },
-    {nombre:"Descargas",icono:"mdi-download",pagina:"/desargas" },
-    {nombre:"His.Trabajo",icono:"mdi-folder-multiple",pagina:"/his.trabajo" },
+    {nombre:"His.Trabajo",icono:"mdi-folder-multiple",pagina:"/his-trabajos" },
     {nombre:"Trabajos",icono:"mdi-account-hard-hat",pagina:"/trabajos" },
     {nombre:"Soporte",icono:"mdi-cog-outline",pagina:"/soporte" },
     

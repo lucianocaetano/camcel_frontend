@@ -1,6 +1,10 @@
 <template>
   <div class="q-pa-md">
-    <q-header elevated style="padding: 0 20px;" class="row justify-between bg-teal-10">
+    <q-header
+      elevated
+      style="padding: 0 20px"
+      class="row justify-between bg-teal-10"
+    >
       <div>
         <q-toolbar class="row items-center">
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
@@ -46,75 +50,72 @@
     >
       <q-scroll-area class="fit">
         <q-list>
-
           <template v-for="(menuItem, index) in menuList" :key="index">
-            <q-item clickable v-ripple>
-              <q-btn
-                :to="{ name: menuItem.href }"
-                flat
-               >
-                <q-item-section avatar>
-                  <q-icon :name="menuItem.icon" />
-                </q-item-section>
-                <q-item-section>
-                  {{menuItem.label}}
-                </q-item-section>
-              </q-btn>
+            <q-item
+              clickable
+              v-ripple
+              class="text-black"
+              :to="{ name: menuItem.href }"
+            >
+              <q-item-section avatar>
+                <q-icon :name="menuItem.icon" />
+              </q-item-section>
+              <q-item-section>
+                {{ menuItem.label }}
+              </q-item-section>
             </q-item>
-            <q-separator :key="'sep' + index"  v-if="menuItem.separator" />
+            <q-separator :key="'sep' + index" v-if="menuItem.separator" />
           </template>
-
         </q-list>
       </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
-      <q-page class="q-mx-auto" style="max-width: 2000px;">
-        <slot/>
+      <q-page class="q-mx-auto" style="max-width: 2000px">
+        <slot />
       </q-page>
     </q-page-container>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const search = ref("")
+const search = ref("");
 
 const menuList = [
   {
-    icon: 'business_center',
-    label: 'Empresas',
+    icon: "business_center",
+    label: "Empresas",
     href: "enterprises",
-    separator: false
+    separator: false,
   },
   {
-    icon: 'mdi-account',
-    label: 'Users',
+    icon: "mdi-account",
+    label: "Users",
     href: "users",
-    separator: true
+    separator: true,
   },
   {
-    icon: 'settings',
-    label: 'Settings',
-    separator: false
+    icon: "settings",
+    label: "Settings",
+    separator: false,
   },
   {
-    icon: 'logout',
-    iconColor: 'primary',
-    label: 'Logout',
-    separator: false
-  }
-]
+    icon: "logout",
+    iconColor: "primary",
+    label: "Logout",
+    separator: false,
+  },
+];
 
 export default {
-  setup () {
+  setup() {
     return {
       drawer: ref(false),
       search,
-      menuList
-    }
-  }
-}
+      menuList,
+    };
+  },
+};
 </script>
-

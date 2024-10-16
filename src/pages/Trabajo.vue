@@ -33,12 +33,93 @@
       <q-list bordered>
         <q-item >
           <q-item-section class="col-12 text-center" > 
-            <q-btn  color="green" @click="registrar" class="col-12">Registrar trabajo</q-btn>
+            <q-btn  color="green" @click="dialogVisible = true" class="col-12">Registrar trabajo</q-btn>
           </q-item-section>
         </q-item>
       </q-list>
       
+      <q-dialog v-model="dialogVisible">
+  <q-card>
+    <q-card-section>
+      <div v-if="step === 0">
+     
+      <div class="col-6">
+        <q-input class="col-6" v-model="newActividad.nombre" label="Nombre Empresa" />
+        <q-input class="col-6" v-model="newActividad.trabajo" label="Trabajo a realizar" />
+      </div>
+      <div class="row">
+        <q-input class="col-6" v-model="newActividad.fechaInicio" label="Fecha Inicio" type="date" />
+        <q-input class="col-6" v-model="newActividad.fechaFin" label="Fecha Fin" type="date" />
+      </div>
+      <div class="row">
+       
+        <q-input filled v-model="timeE" label="Hora de entrada" mask="time" :rules="['time']">
+        <template v-slot:append>
+          <q-icon name="access_time" class="cursor-pointer">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-time v-model="timeE">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-time>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+        
+      <q-input filled v-model="timeS" label="Hora de salida" mask="time" :rules="['time']">
+        <template v-slot:append>
+          <q-icon name="access_time" class="cursor-pointer">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-time v-model="timeS">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-time>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
 
+      </div>
+      
+    </div>
+      <div class="col-12" v-if="step === 1">
+        <div>
+          
+          <q-checkbox v-model="newActividad.confirmacionEmpresa" label="¿Esta empresa, confirmó el trabajo?" style="display: block;"/>
+        </div>
+      <div class="col-6" style="display: inline-block; width: 50%;">
+        <q-checkbox v-model="newActividad.solicitarCI" label="Solicitar CI" style="display: block;"/>
+        
+        <q-checkbox v-model="newActividad.solicitarBPS" label="Solicitar BPS" style="display: block;"/>
+         
+        <q-checkbox v-model="newActividad.solicitarBSE" label="Solicitar BSE" style="display: block;"/>  
+      
+        <q-checkbox v-model="newActividad.solicitarInduccionSeguridad" label="Solicitar Inducción de Seguridad" style="display: block;"/>
+       
+        <q-checkbox v-model="newActividad.permisoTrabajoEnCaliente" label="Permiso de trabajo en caliente" style="display: block;"/> 
+       
+       
+      </div>
+      <div class="col-6" style="display: inline-block; width: 50%;">
+        <q-checkbox v-model="newActividad.permisoTrabajoEnAltura" label="Permiso de trabajo en altura" style="display: block;" /> 
+        
+        <q-checkbox v-model="newActividad.permisoTrabajoEnEspacioConfinado" label="Permiso de trabajo en espacio confinado" style="display: block;"/>
+        
+        <q-checkbox v-model="newActividad.permisoTrabajoOtros" label="Otros permisos de trabajo" style="display: block;"/> 
+       
+        <q-checkbox v-model="newActividad.solicitarEntregaEPP" label="Entrega EPP" style="display: block;"/>
+         </div></div>
+    </q-card-section>
+    <q-card-actions>
+      <q-btn label="Cancelar" @click="dialogVisible = false" />
+      <q-btn v-if="step === 0" @click="stepmas" icon="mdi-chevron-right"/>
+      <q-btn v-if="step === 1" @click="stepmenos"icon="mdi-chevron-left"></q-btn>
+      <q-btn v-if="step === 1" label="Registrar" @click="registrarActividad" color="primary" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
       <q-item v-for="(actividad, index) in actividadesFiltradas" :key="index" :class="{'bg-grey-4': index % 2 === 0}">
         <q-item-section class="col-2"> 
           {{ actividad.nombre }} 
@@ -73,7 +154,7 @@
           
         </q-item-section>
         <q-item-section class="col-2 text-center">
-          <q-btn class="q-mx-auto" style="background-color: white;"> <q-icon name="mdi-text-box-search-outline" size="30px"></q-icon></q-btn>
+          <q-btn class="q-mx-auto" style="background-color: white;"> <q-icon name="description" size="30px"></q-icon></q-btn>
         </q-item-section>
       </q-item> 
     </q-list> 
@@ -143,10 +224,23 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
+const timeE = ref("")
+const timeS = ref ("")
+const step = ref(0)
+
+function stepmas() {
+  if (step.value < 2) {
+    step.value++
+  }
+}
+function stepmenos() {
+  if (step.value > 0) {
+    step.value--
+  }
+}
 
 
-
-
+const dialogVisible = ref(false);
 const actividades = ref([
   { nombre: "Los Pinos", trabajo: "Revisar sistema eléctrico", horaEntrada: "8:00", horaSalida: "17:00", fechaInicio: "2024-10-11", fechaFin: "2024-10-24", completada: false, confirmacionPREV: true, confirmacionEmpresa: true },
   { nombre: "El Roble", trabajo: "Reparar sistema de agua", horaEntrada: "9:00", horaSalida: "18:00", fechaInicio: "2024-10-12", fechaFin: "2024-10-25", completada: false, confirmacionPREV: false, confirmacionEmpresa: false },
@@ -169,6 +263,71 @@ const actividadesFiltradas = computed(() => {
 function confirmarHoraEntrada(index) {
   actividades.value[index].entradaConfirmada = true;
 }
+const newActividad = ref({
+  nombre: '',
+  trabajo: '',
+  fechaInicio: '',
+  fechaFin: '',
+  horaEntrada: '',
+  horaSalida: '',
+  solicitarCI: false,
+  solicitarBPS: false,
+  solicitarBSE: false,
+  solicitarInduccionSeguridad: false,
+  permisoTrabajoEnCaliente: false,
+  permisoTrabajoEnAltura: false,
+  permisoTrabajoEnEspacioConfinado: false,
+  permisoTrabajoOtros: false,
+});
+
+function registrarActividad() {
+  // Verificar que los campos obligatorios estén completos
+  if (newActividad.value.nombre && newActividad.value.trabajo && newActividad.value.fechaInicio && newActividad.value.fechaFin) {
+    // Agregar la nueva actividad al ref actividades
+    actividades.value.push({
+      nombre: newActividad.value.nombre,
+      trabajo: newActividad.value.trabajo,
+      fechaInicio: newActividad.value.fechaInicio,
+      fechaFin: newActividad.value.fechaFin,
+      horaEntrada: timeE,
+      horaSalida: timeS,
+      completada: false, // Puedes establecer el estado completada según sea necesario
+      confirmacionPREV: null, // Otras propiedades inicializadas si es necesario
+      confirmacionEmpresa: newActividad.value.confirmacionEmpresa,
+      solicitarCI: newActividad.value.solicitarCI,
+      solicitarBPS: newActividad.value.solicitarBPS,
+      solicitarBSE: newActividad.value.solicitarBSE,
+      solicitarInduccionSeguridad: newActividad.value.solicitarInduccionSeguridad,
+      permisoTrabajoEnCaliente: newActividad.value.permisoTrabajoEnCaliente,
+      permisoTrabajoEnAltura: newActividad.value.permisoTrabajoEnAltura,
+      permisoTrabajoEnEspacioConfinado: newActividad.value.permisoTrabajoEnEspacioConfinado,
+      permisoTrabajoOtros: newActividad.value.permisoTrabajoOtros,
+    });
+
+    // Cerrar el diálogo o formulario
+    dialogVisible.value = false;
+
+    // Limpiar los campos del formulario
+    newActividad.value = {
+      nombre: '',
+      trabajo: '',
+      fechaInicio: '',
+      fechaFin: '',
+      solicitarCI: false,
+      solicitarBPS: false,
+      solicitarBSE: false,
+      solicitarInduccionSeguridad: false,
+      permisoTrabajoEnCaliente: false,
+      permisoTrabajoEnAltura: false,
+      permisoTrabajoEnEspacioConfinado: false,
+      permisoTrabajoOtros: false,
+    };
+  } else {
+    alert('Por favor, complete todos los campos');
+  }
+}
+
+
 const borrarActividadesFiltradas = () =>{
   const hoy = new Date().toISOString().split('T')[0];
   actividades.value = actividades.value.filter(actividad => actividad.fechaInicio >= hoy);

@@ -1,16 +1,69 @@
 <template>
-  <q-dialog v-model="show" >
-    <q-card style="width: 900px;">
+  <q-dialog v-model="show">
+    <q-card style="width: 900px">
       <q-card-section>
         <div class="text-h6">Menu Edit Empresa</div>
       </q-card-section>
-      <q-card-section>
-        <!-- TODO: menu update empresa -->
-      </q-card-section>
-      <q-card-section class="q-pt-none">
-         <q-form class="flex justify-left">
-           <q-btn label="Editar" class="q-mt-md q-mr-sm" type="submit" color="primary"/>
-         </q-form>
+
+      <q-card-section class="q-pt-none" v-if="empresa">
+        <q-form @submit.prevent="handleUpdateEnterprise">
+          <q-input name="RUT" required label="RUT" v-model="empresa.RUT" />
+          <div
+            v-for="(error, index) in error_create?.RUT"
+            :key="index"
+            class="q-mt-sm"
+          >
+            <span style="2px;" class="q-pa-xs bg-negative text-white">{{
+              error
+            }}</span>
+          </div>
+          <q-input
+            name="nombre"
+            required
+            label="nombre"
+            v-model="empresa.nombre"
+          />
+          <div
+            v-for="(error, index) in error_create?.nombre"
+            :key="index"
+            class="q-mt-sm"
+          >
+            <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
+          </div>
+
+          <q-checkbox label="Verificado" v-model="empresa.is_valid" />
+
+          <q-file color="teal" filled label="image" v-model="empresa.image">
+            <template v-slot:prepend>
+              <q-icon name="cloud_upload" />
+            </template>
+          </q-file>
+
+          <div
+            v-for="(error, index) in error_create?.image"
+            :key="index"
+            class="q-mt-sm"
+          >
+            <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
+          </div>
+
+          <p v-if="isLoadingUser">loading...</p>
+          <q-select
+            v-else
+            v-model="empresa.user_id"
+            required
+            option-label="name"
+            :options="users"
+            label="Standard"
+          />
+
+          <q-btn
+            label="Editar"
+            class="q-mt-md q-mr-sm"
+            type="submit"
+            color="primary"
+          />
+        </q-form>
       </q-card-section>
 
       <q-card-actions align="right">
@@ -18,10 +71,11 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
- </template>
+</template>
 
 <script>
-import { toRef } from "vue"
+import { ref, toRef } from "vue";
+import { api } from "src/boot/axios";
 
 export default {
   props: {
@@ -30,20 +84,31 @@ export default {
       required: true,
     },
     empresa: {
-      required: true
-    }
+      required: true,
+    },
   },
-  setup(props, {emit}) {
-    const show = toRef(props, "show")
-    const empresa = toRef(props, "empresa")
+  setup(props, { emit }) {
+    const show = toRef(props, "show");
+    const empresa = toRef(props, "empresa");
+    const error_create = ref(null);
+
+    const isLoadingUser = ref(true);
+    const users = ref(null);
+
+    api.get("admin/businessmen").then((response) => {
+      isLoadingUser.value = false;
+      users.value = response.data;
+    });
+
+    const handleUpdateEnterprise = () => {};
 
     const handleClose = () => {
-      emit("handleCloseMenuEmpresa")
-    }
+      emit("handleCloseMenuEmpresa");
+    };
 
-    return {show, handleClose, empresa}
-  }
-}
+    return { show, handleClose, empresa, error_create, handleUpdateEnterprise, isLoadingUser, users };
+  },
+};
 </script>
 
 <style scoped>
@@ -56,11 +121,8 @@ export default {
   cursor: pointer;
 }
 .scrollable-section {
-   /* Altura máxima deseada para la sección */
+  /* Altura máxima deseada para la sección */
   overflow-y: auto; /* Habilitar barra de desplazamiento vertical cuando sea necesario */
   /* Otros estilos opcionales */
 }
 </style>
-
-
-

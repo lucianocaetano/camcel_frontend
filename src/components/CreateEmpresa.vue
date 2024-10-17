@@ -41,14 +41,13 @@
           <div v-for="(error, index) in error_create?.image" :key="index" class="q-mt-sm">
             <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
           </div>
-
           <p v-if="isLoadingUser">loading...</p>
           <q-select
             v-else
             v-model="dataCreateEnterprise.user_id"
             required
             option-label="name"
-            :options="user"
+            :options="users"
             label="Standard"
           />
 
@@ -88,11 +87,11 @@ export default {
     const enterpriseStore = useEnterpriseStore();
 
     const isLoadingUser = ref(true);
-    const user = ref(null);
+    const users = ref(null);
 
     api.get("admin/businessmen").then((response) => {
       isLoadingUser.value = false;
-      user.value = response.data;
+      users.value = response.data;
     });
 
     const show = toRef(props, "show");
@@ -130,7 +129,7 @@ export default {
           handleCloseCreateEnterprise();
         })
         .catch((err) => {
-          if (err.response.status === 422) {
+            if (err.response.status === 422) {
             const messages = err.response.data.errors;
             error_create.value = messages;
           }
@@ -143,7 +142,7 @@ export default {
       show,
       handleCloseCreateEnterprise,
       isLoadingUser,
-      user,
+      users,
       error_create,
     };
   },

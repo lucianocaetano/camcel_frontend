@@ -41,6 +41,12 @@
                 color="primary"
                 @click="handleOpenMenuEmpresa"
               />
+              <menu-edit-empresa
+                :empresa="empresa"
+                :show="menuEmpresa"
+                @handleCloseMenuEmpresa="handleCloseMenuEmpresa"
+              />
+
               <q-btn
                 label="Borrar"
                 class="q-mt-md"
@@ -65,11 +71,6 @@
         :operator="operator"
         :show="menuOperator"
         @handleCloseMenuOperator="handleCloseMenuOperator"
-      />
-      <menu-edit-empresa
-        :empresa="empresa"
-        :show="menuEmpresa"
-        @handleCloseMenuEmpresa="handleCloseMenuEmpresa"
       />
 
       <q-table
@@ -113,6 +114,7 @@ export default {
   setup() {
     const route = useRoute();
     const router = useRouter();
+
     const enterpriseStore = useEnterpriseStore();
     const { params } = route;
 
@@ -130,7 +132,8 @@ export default {
       menuOperator.value = true;
       operator.value = row;
     };
-    const handleOpenMenuEmpresa = () => menuEmpresa.value = true;
+
+    const handleOpenMenuEmpresa = () => (menuEmpresa.value = true);
 
     const handleRemoveEnterprise = () => {
       api.delete(`admin/enterprises/${params.slug}`).then((response) => {
@@ -141,8 +144,8 @@ export default {
       });
     };
 
-    const handleCloseMenuOperator = () => menuOperator.value = false;
-    const handleCloseMenuEmpresa = () => menuEmpresa.value = false;
+    const handleCloseMenuOperator = () => (menuOperator.value = false);
+    const handleCloseMenuEmpresa = () => (menuEmpresa.value = false);
 
     const columnOperators = [
       { name: "cedula", label: "Cédula", field: "cedula", align: "left" },

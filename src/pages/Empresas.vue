@@ -20,6 +20,7 @@
 
       <create-empresa
         v-if="enterpriseCreate"
+        :show="enterpriseCreate"
         @handleCloseCreateEnterprise="handleCloseCreateEnterprise"
       />
     </q-toolbar>

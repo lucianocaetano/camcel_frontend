@@ -7,18 +7,32 @@
 
       <q-card-section class="q-pt-none">
         <q-form @submit.prevent="handleCreateEnterprise">
-          <q-input name="RUT" required label="RUT" v-model="dataCreateEnterprise.RUT" />
-          <div v-for="(error, index) in error_create?.RUT" :key="index" class="q-mt-sm">
-            <span style="2px;" class="q-pa-xs bg-negative text-white">{{ error }}</span>
+          <q-input
+            name="RUT"
+            required
+            label="RUT"
+            v-model="dataCreateEnterprise.RUT"
+          />
+          <div
+            v-for="(error, index) in error_create?.RUT"
+            :key="index"
+            class="q-mt-sm"
+          >
+            <span style="2px;" class="q-pa-xs bg-negative text-white">
+              {{ error }}
+            </span>
           </div>
-
           <q-input
             name="nombre"
             required
             label="nombre"
             v-model="dataCreateEnterprise.nombre"
           />
-          <div v-for="(error, index) in error_create?.nombre" :key="index" class="q-mt-sm">
+          <div
+            v-for="(error, index) in error_create?.nombre"
+            :key="index"
+            class="q-mt-sm"
+          >
             <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
           </div>
 
@@ -37,8 +51,11 @@
               <q-icon name="cloud_upload" />
             </template>
           </q-file>
-
-          <div v-for="(error, index) in error_create?.image" :key="index" class="q-mt-sm">
+          <div
+            v-for="(error, index) in error_create?.image"
+            :key="index"
+            class="q-mt-sm"
+          >
             <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
           </div>
           <p v-if="isLoadingUser">loading...</p>
@@ -48,10 +65,14 @@
             required
             option-label="name"
             :options="users"
-            label="Standard"
+            label="Usuario Empresario"
           />
 
-          <div v-for="(error, index) in error_create?.user_id" :key="index" class="q-mt-sm">
+          <div
+            v-for="(error, index) in error_create?.user_id"
+            :key="index"
+            class="q-mt-sm"
+          >
             <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
           </div>
           <q-btn label="Crear" class="q-mt-md" type="submit" color="primary" />
@@ -67,11 +88,13 @@
           @click="handleCloseCreateEnterprise"
         />
       </q-card-actions>
+
     </q-card>
   </q-dialog>
 </template>
 
 <script>
+
 import { reactive, toRef, ref } from "vue";
 import { api } from "src/boot/axios";
 import { useEnterpriseStore } from "src/store/enterprise.store";
@@ -89,7 +112,11 @@ export default {
     const isLoadingUser = ref(true);
     const users = ref(null);
 
-    api.get("admin/businessmen").then((response) => {
+    api.get("admin/users", {
+      params: {
+        "rol": "users_enterprise"
+      }
+    }).then((response) => {
       isLoadingUser.value = false;
       users.value = response.data;
     });
@@ -129,7 +156,7 @@ export default {
           handleCloseCreateEnterprise();
         })
         .catch((err) => {
-            if (err.response.status === 422) {
+          if (err.response.status === 422) {
             const messages = err.response.data.errors;
             error_create.value = messages;
           }

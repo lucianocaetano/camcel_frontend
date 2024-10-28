@@ -7,16 +7,6 @@
 
       <q-card-section class="q-pt-none" v-if="empresa">
         <q-form @submit.prevent="handleUpdateEnterprise">
-          <q-input name="RUT" required label="RUT" v-model="empresa.RUT" />
-          <div
-            v-for="(error, index) in error_create?.RUT"
-            :key="index"
-            class="q-mt-sm"
-          >
-            <span style="2px;" class="q-pa-xs bg-negative text-white">{{
-              error
-            }}</span>
-          </div>
           <q-input
             name="nombre"
             required
@@ -50,7 +40,7 @@
           <p v-if="isLoadingUser">loading...</p>
           <q-select
             v-else
-            v-model="empresa.user_id"
+            v-model="empresa.user"
             required
             option-label="name"
             :options="users"
@@ -95,18 +85,57 @@ export default {
     const isLoadingUser = ref(true);
     const users = ref(null);
 
-    api.get("admin/businessmen").then((response) => {
+    api.get("admin/users", {
+      params: {
+        "rol": "users_enterprise"
+      }
+    }).then((response) => {
       isLoadingUser.value = false;
       users.value = response.data;
     });
-
-    const handleUpdateEnterprise = () => {};
 
     const handleClose = () => {
       emit("handleCloseMenuEmpresa");
     };
 
-    return { show, handleClose, empresa, error_create, handleUpdateEnterprise, isLoadingUser, users };
+    const handleUpdateEnterprise = () => {
+      api
+        .put(
+          "admin/enterprises/" + empresa.value.slug,
+          {
+            ...empresa.value,
+            user_id: empresa.value.user?.id,
+            image: undefined
+          },
+          {
+            headers: empresa.image
+              ? { "Content-Type": "multipart/form-data" }
+              : { "Content-Type": "application/json" },
+          }
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            handleClose();
+          }
+        })
+        .catch((err) => {
+            console.log(err)
+          if (err?.response?.status === 422) {
+            const messages = err.response.data.errors;
+            error_create.value = messages;
+          }
+        });
+    };
+
+    return {
+      show,
+      handleClose,
+      empresa,
+      error_create,
+      handleUpdateEnterprise,
+      isLoadingUser,
+      users,
+    };
   },
 };
 </script>

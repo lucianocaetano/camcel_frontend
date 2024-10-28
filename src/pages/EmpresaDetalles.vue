@@ -26,10 +26,10 @@
     <div class="row justify-between">
       <div class="text-caption">
         <div class="text-grey row items-center">
-          {{ empresa.is_valid === 1 ? "Verificado" : "No verificado" }}
+          {{ empresa.is_valid ? "Verificado" : "No verificado" }}
           <q-icon
-            :name="empresa.is_valid === 1 ? 'check_circle' : 'cancel'"
-            :color="empresa.is_valid === 1 ? 'green' : 'red'"
+            :name="empresa.is_valid ? 'check_circle' : 'cancel'"
+            :color="empresa.is_valid ? 'green' : 'red'"
             size="30px"
           />
           <q-card-section class="q-pt-none">
@@ -42,6 +42,7 @@
                 @click="handleOpenMenuEmpresa"
               />
               <menu-edit-empresa
+                v-if="menuEmpresa"
                 :empresa="empresa"
                 :show="menuEmpresa"
                 @handleCloseMenuEmpresa="handleCloseMenuEmpresa"
@@ -58,7 +59,7 @@
           </q-card-section>
         </div>
       </div>
-      <div style="width: 400px">
+      <div style="width: 400px" v-if="empresa.user">
         <h5 class="text-h5 q-my-none">Encargado de la empresa</h5>
         <q-card>
           <q-card-section> Nombre: {{ empresa.user.name }} </q-card-section>
@@ -133,8 +134,6 @@ export default {
       operator.value = row;
     };
 
-    const handleOpenMenuEmpresa = () => (menuEmpresa.value = true);
-
     const handleRemoveEnterprise = () => {
       api.delete(`admin/enterprises/${params.slug}`).then((response) => {
         if (response.status === 200) {
@@ -145,7 +144,6 @@ export default {
     };
 
     const handleCloseMenuOperator = () => (menuOperator.value = false);
-    const handleCloseMenuEmpresa = () => (menuEmpresa.value = false);
 
     const columnOperators = [
       { name: "cedula", label: "Cédula", field: "cedula", align: "left" },
@@ -172,6 +170,11 @@ export default {
           empresaNoExiste.value = true;
         }
       });
+
+    const handleOpenMenuEmpresa = () => (menuEmpresa.value = true);
+    const handleCloseMenuEmpresa = () => {
+      menuEmpresa.value = false;
+    };
 
     return {
       isLoading,

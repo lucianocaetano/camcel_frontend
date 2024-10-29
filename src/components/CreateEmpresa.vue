@@ -63,7 +63,7 @@
             v-else
             v-model="dataCreateEnterprise.user_id"
             required
-            option-label="name"
+            option-label="email"
             :options="users"
             label="Usuario Empresario"
           />
@@ -114,7 +114,7 @@ export default {
 
     api.get("admin/users", {
       params: {
-        "rol": "users_enterprise"
+        "role": "users_enterprise"
       }
     }).then((response) => {
       isLoadingUser.value = false;

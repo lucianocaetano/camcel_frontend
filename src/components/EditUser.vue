@@ -101,7 +101,7 @@ export default {
     const show = toRef(props, "show");
     const data = reactive({
       name: props.user.name,
-      email: undefined,
+      email: props.user.email,
       password: undefined,
       rol: props.user.rol,
     })
@@ -119,6 +119,7 @@ export default {
           {
             ...data,
             rol: data.rol.value,
+            email: data.email === props.user.email? undefined: data.email
           },
           {
             headers: { "Content-Type": "application/json" },

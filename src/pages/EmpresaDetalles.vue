@@ -68,12 +68,6 @@
       </div>
     </div>
     <div class="q-mt-md">
-      <menu-operario
-        :operator="operator"
-        :show="menuOperator"
-        @handleCloseMenuOperator="handleCloseMenuOperator"
-      />
-
       <q-table
         class="my-sticky-column-table"
         style="height: 400px; width: 100%"
@@ -82,9 +76,9 @@
         title="Operadores"
         :rows="operators"
         :columns="columnOperators"
-        row-key="index"
-        virtual-scroll
+        row-key="id"
         @row-click="onRowClick"
+        virtual-scroll
       />
     </div>
   </div>
@@ -99,7 +93,6 @@
 </template>
 
 <script>
-import MenuOperario from "src/components/MenuOperator.vue";
 import MenuEditEmpresa from "src/components/MenuEditEmpresa.vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from "src/boot/axios";
@@ -109,7 +102,6 @@ import { useEnterpriseStore } from "src/store/enterprise.store.js";
 
 export default {
   components: {
-    MenuOperario,
     MenuEditEmpresa,
   },
   setup() {
@@ -124,15 +116,7 @@ export default {
     const empresaNoExiste = ref(false);
     const operators = ref([]);
 
-    const menuOperator = ref(false);
     const menuEmpresa = ref(false);
-
-    const operator = ref(null);
-
-    const onRowClick = (evt, row) => {
-      menuOperator.value = true;
-      operator.value = row;
-    };
 
     const handleRemoveEnterprise = () => {
       api.delete(`admin/enterprises/${params.slug}`).then((response) => {
@@ -142,8 +126,6 @@ export default {
         }
       });
     };
-
-    const handleCloseMenuOperator = () => (menuOperator.value = false);
 
     const columnOperators = [
       { name: "cedula", label: "Cédula", field: "cedula", align: "left" },
@@ -176,6 +158,10 @@ export default {
       menuEmpresa.value = false;
     };
 
+    const onRowClick = (e, item) => {
+        console.log(item.cedula)
+    };
+
     return {
       isLoading,
       empresa,
@@ -184,13 +170,10 @@ export default {
       columnOperators,
       operators,
       onRowClick,
-      handleCloseMenuOperator,
       handleCloseMenuEmpresa,
       handleOpenMenuEmpresa,
       handleRemoveEnterprise,
-      menuOperator,
       menuEmpresa,
-      operator,
       pagination: ref({
         rowsPerPage: 0,
       }),

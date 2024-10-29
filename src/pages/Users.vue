@@ -39,10 +39,35 @@
         @click="handleCreateUserMenuOpen"
         >Create</q-btn
       >
-      <q-btn @click="fetchUsers(undefined)">Todos</q-btn>
-      <q-btn @click="fetchUsers('Admin')">Admin</q-btn>
-      <q-btn @click="fetchUsers('Enterprise')">Empresarios</q-btn>
-      <q-btn @click="fetchUsers('Guard')">Guardia</q-btn>
+
+      <q-btn-dropdown
+        color="#a5a5a5"
+        label="Filtrar"
+        text-color="#000000"
+      >
+        <q-list>
+          <q-item clickable v-close-popup @click="fetchUsers(undefined)">
+            <q-item-section>
+              <q-item-label>Todos</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item clickable v-close-popup @click="fetchUsers('Admin')">
+            <q-item-section>
+              <q-item-label>Admins</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item clickable v-close-popup @click="fetchUsers('Enterprise')">
+            <q-item-section>
+              <q-item-label>Empresarios</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item clickable v-close-popup @click="fetchUsers('Guard')">
+            <q-item-section>
+              <q-item-label>Guardias</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
     </div>
   </div>
   <div class="q-pa-md">

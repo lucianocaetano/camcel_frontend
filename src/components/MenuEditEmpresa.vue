@@ -42,7 +42,7 @@
             v-else
             v-model="empresa.user"
             required
-            option-label="name"
+            option-label="email"
             :options="users"
             label="Standard"
           />

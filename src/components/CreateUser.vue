@@ -84,7 +84,6 @@
 <script>
 import { reactive, toRef, ref } from "vue";
 import { api } from "src/boot/axios";
-import { useEnterpriseStore } from "src/store/enterprise.store";
 
 export default {
   props: {
@@ -94,7 +93,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const enterpriseStore = useEnterpriseStore();
 
     const roles = [
       { label: "Empresario", value: "Enterprise" },

@@ -2,7 +2,7 @@
   <q-dialog v-model="show">
     <q-card style="width: 900px">
       <q-card-section>
-        <div class="text-h6">Edit User</div>
+        <div class="text-h6">Editar Usuario</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
         <q-form @submit.prevent="handleEditUser">
@@ -103,7 +103,7 @@ export default {
       name: props.user.name,
       email: props.user.email,
       password: undefined,
-      rol: props.user.rol,
+      rol: props.user.rol === "Empresario sin empresa"? roles[0]: props.user.rol,
     })
 
     const error_create = ref(null);

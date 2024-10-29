@@ -2,7 +2,7 @@
   <q-dialog v-model="show">
     <q-card style="width: 900px">
       <q-card-section>
-        <div class="text-h6">Crear User</div>
+        <div class="text-h6">Crear Usuarios</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -106,7 +106,7 @@ export default {
       email: "",
       name: "",
       password: "",
-      rol: "Enterprise",
+      rol: roles[0],
     });
 
     const error_create = ref(null);

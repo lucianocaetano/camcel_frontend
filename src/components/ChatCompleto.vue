@@ -2,13 +2,13 @@
   <!-- Header -->
   <div class="header">
     <q-toolbar class="bg-grey-3 text-black">
-      <q-btn round flat @click="menu = !menu">
+      <q-btn round flat @click="isMobile && (menu = !menu)">
         <q-avatar>
           <img :src="currentConversation.avatar">
         </q-avatar>
       </q-btn>
 
-      <span class="q-subtitle-1 q-pl-md" @click="menu = !menu">
+      <span class="q-subtitle-1 q-pl-md" @click="isMobile && (menu = !menu)">
         {{ currentConversation.person }}
       </span>
 
@@ -30,7 +30,7 @@
     </q-toolbar>
 
     <!-- Menú desplegable para móviles -->
-    <q-menu v-model="menu" auto-close>
+    <q-menu v-if="isMobile" v-model="menu" auto-close>
       <q-list>
         <q-item
           v-for="(conversation, index) in conversations"
@@ -50,7 +50,6 @@
       </q-list>
     </q-menu>
 
-   
     <q-scroll-area style="height: calc(100% - 100px)">
       <q-list>
         <q-item
@@ -150,135 +149,7 @@ const conversations = ref([
     time: '17:00',
     sent: true,
     messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },{
-    id: 3,
-    person: 'Jeff Galbraith',
-    avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-    caption: "I'm working on Quasar!",
-    time: '18:00',
-    sent: true,
-    messages: []
-  },
+  }
 ])
 
 const currentConversationIndex = ref(0)

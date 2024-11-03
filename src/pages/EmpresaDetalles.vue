@@ -49,7 +49,7 @@
               />
 
               <q-btn
-                label="Borrar"
+                label="Desvalidar"
                 class="q-mt-md"
                 type="button"
                 color="negative"

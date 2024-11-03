@@ -116,6 +116,7 @@ export default {
     };
 
     const handleCreateUser = () => {
+
       api
         .post(
           "admin/users",
@@ -127,10 +128,11 @@ export default {
             headers: { "Content-Type": "application/json" },
           }
         )
-        .then((response) => {
+        .then(() => {
           handleCloseCreateUser();
         })
         .catch((err) => {
+            console.error(err)
           if (err?.response?.status === 422) {
             const messages = err.response.data.errors;
             error_create.value = messages;

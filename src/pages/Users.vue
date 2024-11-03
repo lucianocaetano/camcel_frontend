@@ -153,6 +153,7 @@ export default {
       validDeleteMenu.value = false;
       handleDeleteUser(id_user_delete.value);
       id_user_delete.value = null;
+      fetchUsers()
     };
 
     const fetchUsers = (role = undefined) => {

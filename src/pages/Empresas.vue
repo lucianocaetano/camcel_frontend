@@ -28,7 +28,6 @@
         <q-btn flat bordered @click="enterpriseCreate = true">
           <q-avatar icon="mdi-plus-circle-outline" />
         </q-btn>
-
         <create-empresa
           v-if="enterpriseCreate"
           :show="enterpriseCreate"

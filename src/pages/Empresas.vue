@@ -14,42 +14,57 @@
       </q-input>
 
       <q-toolbar class="row reverse">
-         <q-btn flat bordered>
+         <q-btn flat bordered @click="enterpriseCreate = true">
             <q-avatar icon="mdi-plus-circle-outline" />
          </q-btn>
+
+         <create-empresa v-if="enterpriseCreate" :show="enterpriseCreate" @handleCloseCreateEnterprise="handleCloseCreateEnterprise" />
       </q-toolbar>
-      
    </q-toolbar>
 
    <div v-if="!isLoading" class="q-pa-md row justify-center">
-      <div v-for="empresa in empresas" :key="empresa.id">
-         <boton-empresas :empresa="empresa"/>
-      </div>
+    <v-template  v-for="empresa in empresas" :key="empresa.id">
+         <div v-if="search !== ''">
+                 <card-empresas :empresa="empresa" v-if="empresa.nombre.toLowerCase().match(search.toLowerCase())"/>
+              </div>
+              <div v-else>
+                <card-empresas :empresa="empresa"/>
+              </div>
+    </v-template>
    </div>
    <div v-if="isLoading" class="text-center">loading ...</div>
 </template>
 
 <script>
-import BotonEmpresas from 'src/components/BotonEmpresas.vue';
+import CardEmpresas from 'src/components/CardEmpresas.vue';
+import CreateEmpresa from "src/components/CreateEmpresa.vue"
+import { useEnterpriseStore } from "src/store/enterprise.store"
 import { api } from "src/boot/axios";
-import { useUserStore } from "src/store/user.store";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 export default {
    components: {
-      BotonEmpresas
+      CardEmpresas,
+      CreateEmpresa
    }, setup () {
-
+      const enterpriseStore = useEnterpriseStore()
       const search = ref("");
+
+      const enterpriseCreate = ref(false);
       const isLoading = ref(true)
-      const empresas = ref(null)
+      const empresas = computed(() => enterpriseStore.enterprises)
+
+      const handleCloseCreateEnterprise = () => {
+         enterpriseCreate.value = false
+      }
 
       api.get("admin/enterprises").then((response) => {
          isLoading.value = false
-         empresas.value = response.data
+         enterpriseStore.setEnterprises(response.data)
       })
 
-      return {isLoading, empresas, search}
+      return {isLoading, empresas, search, enterpriseCreate, handleCloseCreateEnterprise}
+
    }
 }
 

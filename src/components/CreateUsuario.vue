@@ -1,3 +1,7 @@
 <template>
-    details enterprise
+
 </template>
+
+<script>
+
+</script>

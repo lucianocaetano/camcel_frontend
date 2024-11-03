@@ -1,12 +1,12 @@
 <template>
-  <div class="background_login"> 
+  <div class="background_login">
   <div class="caja1"></div>
    <div class="login">
     <div class="login_title"></div>
       <q-card class="my-card">
         <q-card-section class="bg-teal-10">
           <div class="text-h6 text-center text-white ">LOGIN</div>
-          
+
         </q-card-section>
         <q-separator />
 
@@ -32,28 +32,25 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { createPinia } from 'pinia'
   import { useUserStore } from '../store/user.store'
-  import axios from "axios"
   import { useRouter } from 'vue-router'
   import { api } from 'src/boot/axios';
 
   const router = useRouter()
   const userStore = useUserStore()
 
-  const text= ref("")
-  
+  if(userStore.auth){
+    router.push("/")
+  }
+
   const email = ref("")
   const suffix = ref("@gmail.com")
   const password = ref("")
-  
-  const isPwd = ref(true)
-  const dense = ref(false)
 
   const enviar_datos = async () =>{
     api.post('auth/login', {
       email: email.value + suffix.value,
-      password:password.value 
+      password:password.value
     })
     .then(function (response) {
       userStore.setToken(response.data.access_token);
@@ -73,12 +70,12 @@
 .btn_ingresar{
   margin-top: 35% !important;
   width: 90%;
-  
+
 }
 .btn_ingresar2{
   margin-top: 50% !important;
   width: 90%;
-  
+
 }
 .my-card {
 
@@ -91,7 +88,7 @@
   margin-top: 0px;
   height: 700px;
   width: 100%;
- 
+
 }
 .login{
   height: 60%;

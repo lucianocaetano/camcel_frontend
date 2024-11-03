@@ -7,8 +7,6 @@ const routes = [
     ]
   },
 
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/error/',
     component: () => import('layouts/MainLayout.vue'),
@@ -18,7 +16,7 @@ const routes = [
   },
   {
     path: '/login/',
-    component: () => import('pages/InicioSesion.vue'),
+    component: () => import('pages/Login.vue'),
     
   },
   {
@@ -49,16 +47,29 @@ const routes = [
       { path: '', component: () => import('src/pages/Documentos.vue') }
     ]
   }, {
-    path: '/calendario/',
+    path: '/trabajos/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/Calendario.vue') }
+      { path: '', component: () => import('src/pages/Trabajo.vue') }
+    ]
+  },
+  {
+    path: '/his-trabajos/',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/HisTrabajo.vue') }
     ]
   }, {
     path: '/soporte/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('src/pages/Soporte.vue') }
+    ]
+  },{
+    path: '/usuarios/',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/Usuarios.vue') }
     ]
   },
 

@@ -33,9 +33,14 @@ const routes = [
         name: "enterprises",
       },
       {
-        path: ":slug",
+        path: ":slug/",
         component: () => import("src/pages/EmpresaDetalles.vue"),
         name: "enterprise-detail",
+      },
+      {
+        path: ":enterprise/operator/:pk/",
+        component: () => import("src/pages/OperatorDetail.vue"),
+        name: "operators-detail",
       },
     ],
   },

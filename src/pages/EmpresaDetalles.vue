@@ -159,21 +159,33 @@ export default {
         field: "autorizado",
         align: "left",
       },
-      { name: "cargo", label: "Cargo", field: "cargo", align: "left" },
+      {
+        name: "cargo",
+        label: "Cargo",
+        field: "cargo",
+        align: "left",
+      },
     ];
 
     api
       .get(`admin/enterprises/${params.slug}`)
       .then((response) => {
         empresa.value = response.data.enterprise;
-        operators.value = response.data.operators;
-        isLoading.value = false;
+
+        if (response.status === 200) {
+          api.get(`admin/${params.slug}/operators`).then((response) => {
+            operators.value = response.data.operators;
+          });
+        }
       })
       .catch((err) => {
         isLoading.value = false;
         if (err?.response?.status === 404) {
           empresaNoExiste.value = true;
         }
+      })
+      .finally(() => {
+        isLoading.value = false;
       });
 
     const handleOpenMenuEmpresa = () => (menuEmpresa.value = true);
@@ -182,7 +194,13 @@ export default {
     };
 
     const onRowClick = (e, item) => {
-      console.log(item.cedula);
+      router.push({
+        name: "operators-detail",
+        params: {
+          pk: item.id,
+          enterprise: params.slug,
+        },
+      });
     };
 
     return {

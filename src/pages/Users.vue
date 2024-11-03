@@ -163,7 +163,8 @@ export default {
 
       api.get("admin/users", { params }).then((response) => {
         isLoading.value = false;
-        users.value = response.data;
+          console.log(response)
+        users.value = response.data.users;
       });
     };
 

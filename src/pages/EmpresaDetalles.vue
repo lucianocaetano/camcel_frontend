@@ -49,11 +49,21 @@
               />
 
               <q-btn
+                v-if="empresa.is_valid"
                 label="Desvalidar"
                 class="q-mt-md"
                 type="button"
                 color="negative"
-                @click="handleRemoveEnterprise"
+                @click="handleDesvalidEnterprise"
+              />
+
+              <q-btn
+                v-else
+                label="Validar"
+                class="q-mt-md"
+                type="button"
+                color="secondary"
+                @click="handleValidEnterprise"
               />
             </div>
           </q-card-section>
@@ -118,7 +128,20 @@ export default {
 
     const menuEmpresa = ref(false);
 
-    const handleRemoveEnterprise = () => {
+    const handleValidEnterprise = () => {
+      api
+        .patch(`admin/enterprises/${params.slug}`, {
+          is_valid: true,
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            enterpriseStore.removeEnterprise(params.slug);
+            router.push("/empresas");
+          }
+        });
+    };
+
+    const handleDesvalidEnterprise = () => {
       api.delete(`admin/enterprises/${params.slug}`).then((response) => {
         if (response.status === 200) {
           enterpriseStore.removeEnterprise(params.slug);
@@ -159,7 +182,7 @@ export default {
     };
 
     const onRowClick = (e, item) => {
-        console.log(item.cedula)
+      console.log(item.cedula);
     };
 
     return {
@@ -169,10 +192,11 @@ export default {
       api_base_backend,
       columnOperators,
       operators,
+      handleValidEnterprise,
       onRowClick,
       handleCloseMenuEmpresa,
       handleOpenMenuEmpresa,
-      handleRemoveEnterprise,
+      handleDesvalidEnterprise,
       menuEmpresa,
       pagination: ref({
         rowsPerPage: 0,

@@ -8,6 +8,13 @@
       <q-card-section class="q-pt-none" v-if="empresa">
         <q-form @submit.prevent="handleUpdateEnterprise">
           <q-input
+            name="rut"
+            required
+            label="rut"
+            v-model="empresa.RUT"
+          />
+
+          <q-input
             name="nombre"
             required
             label="nombre"
@@ -20,8 +27,6 @@
           >
             <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
           </div>
-
-          <q-checkbox label="Verificado" v-model="empresa.is_valid" />
 
           <q-file color="teal" filled label="image" v-model="empresa.image">
             <template v-slot:prepend>
@@ -85,14 +90,16 @@ export default {
     const isLoadingUser = ref(true);
     const users = ref(null);
 
-    api.get("admin/users", {
-      params: {
-        "rol": "users_enterprise"
-      }
-    }).then((response) => {
-      isLoadingUser.value = false;
-      users.value = response.data;
-    });
+    api
+      .get("admin/users", {
+        params: {
+          rol: "users_enterprise",
+        },
+      })
+      .then((response) => {
+        isLoadingUser.value = false;
+        users.value = response.data;
+      });
 
     const handleClose = () => {
       emit("handleCloseMenuEmpresa");
@@ -105,7 +112,7 @@ export default {
           {
             ...empresa.value,
             user_id: empresa.value.user?.id,
-            image: undefined
+            image: undefined,
           },
           {
             headers: empresa.image
@@ -119,7 +126,7 @@ export default {
           }
         })
         .catch((err) => {
-            console.log(err)
+          console.log(err);
           if (err?.response?.status === 422) {
             const messages = err.response.data.errors;
             error_create.value = messages;

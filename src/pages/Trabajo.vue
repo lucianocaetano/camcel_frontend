@@ -10,7 +10,7 @@
             <q-item-label header>Trabajo a realizar</q-item-label>
           </q-item-section>
           <q-item-section class="col-2 text-center">
-            <q-item-label header>Fecha <br>* Entrada <br>* Salida</q-item-label>
+            <q-item-label header>Fechas de Trabajo</q-item-label>
           </q-item-section>
           <q-item-section class="col-2 text-center">
             <q-item-label header>Confirmación <br>Prevencionista</q-item-label>
@@ -113,28 +113,37 @@
   </q-card>
 </q-dialog>
 
-        <q-item v-for="(actividad, index) in actividadesFiltradas" :key="index" :class="{'bg-grey-4': index % 2 === 0}">
+    <q-item v-for="(item, index) in item" :key="index" :class="{'bg-grey-4': index % 2 === 0}">
           <q-item-section class="col-2">
-            {{ actividad.nombre }}
+            {{ item.nombre }}
           </q-item-section>
           <q-item-section class="col-2">
-            {{ actividad.trabajo }}
+            {{ item.trabajo }}
           </q-item-section>
           <q-item-section class="col-2 text-center">
-            {{ actividad.fechaInicio }} <br>
-            {{ actividad.fechaFin }}
+            <div>
+              <span>{{ item.fechas[0] }}</span> <!-- Muestra la primera fecha -->
+              <span v-if="item.fechas.length > 1"> - {{ item.fechas[item.fechas.length - 1] }}</span> <!-- Muestra la última fecha si hay más de una -->
+              <q-btn @click="toggleDropdown(index)" :label="isDropdownOpen(index) ? 'Ocultar Fechas' : 'Ver Todas las Fechas'" />
+            </div>
+            <div v-if="isDropdownOpen(index)">
+              <div v-for="(fecha, fechaIndex) in item.fechas" :key="fechaIndex">{{ fecha }}</div>
+            </div>
           </q-item-section>
           <q-item-section class="col-3 text-center">
             <div>
-              <q-btn round v-if="actividad.confirmacionPREV === null" color="green" @click="confirmarPREV(index)" icon="mdi-check-circle" />
-              <q-btn round v-if="actividad.confirmacionPREV === null" color="red" @click="denegarPREV(index)" icon="mdi-close-circle" />
-              <q-icon v-if="actividad.confirmacionPREV === true" name="mdi-check-circle" color="green" size="40px" style="padding-right: 20px;"></q-icon>
-              <q-icon v-if="actividad.confirmacionPREV === false" name="mdi-close-circle" color="red" size="40px" style="padding-right: 20px;"></q-icon>
+              {{ index }}
+              
+              <q-btn round v-if="item.confirmacionPREV === null" color="green" @click="confirmarPREV(index)" icon="mdi-check-circle" />
+              <q-btn round v-if="item.confirmacionPREV === null" color="red" @click="denegarPREV(index)" icon="mdi-close-circle" />
+              <q-icon v-if="item.confirmacionPREV === 1" name="mdi-check-circle" color="green" size="40px" style="padding-right: 20px;"></q-icon>
+              <q-icon v-if="item.confirmacionPREV === 0" name="mdi-close-circle" color="red" size="40px" style="padding-right: 20px;"></q-icon>
+
             </div>
           </q-item-section>
           <q-item-section class="col-1 text-center">
-            <q-icon v-if="actividad.confirmacionEmpresa" name="mdi-check-circle" color="green" size="40px"></q-icon>
-            <q-icon v-if="!actividad.confirmacionEmpresa" name="mdi-close-circle" color="red" size="40px"></q-icon>
+            <q-icon v-if="item.confirmacionEmpresa" name="mdi-check-circle" color="green" size="40px"></q-icon>
+            <q-icon v-if="!item.confirmacionEmpresa" name="mdi-close-circle" color="red" size="40px"></q-icon>
           </q-item-section>
           <q-item-section class="col-2 text-center">
             <q-btn class="q-mx-auto" style="background-color: white;">
@@ -152,14 +161,31 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useEnterpriseStore } from "src/store/enterprise.store"
 import { api } from "src/boot/axios";
+import { useUserStore } from 'src/store/user.store';
 
+const userStore = useUserStore()
+const token = userStore.token;
 const enterpriseStore = useEnterpriseStore()
-const actividades = ref([]);
+const item = ref([]);
+const horas = ref([]);
 const dialogVisible = ref(false);
 const timeE = ref("");
 const timeS = ref("");
 const step = ref(0);
+const dropdowns = ref({}); // Objeto para manejar el estado de cada desplegable
+
+const toggleDropdown = (index) => {
+  dropdowns.value[index] = !isDropdownOpen(index); // Cambia el estado del desplegable
+};
+
+const isDropdownOpen = (index) => {
+  return !!dropdowns.value[index]; // Verifica si el desplegable está abierto
+};
+
+// Asegúrate de que 'items' sea una propiedad pasada a este componente
+const props = defineProps(['items']);
 const newActividad = ref({
+  
   nombre: '',
   trabajo: '',
   fechaInicio: '',
@@ -181,38 +207,100 @@ function stepmenos() {
   }
 }
 
-// Computed para filtrar las actividades
-const actividadesFiltradas = computed(() => {
-  const hoy = new Date().toISOString().split('T')[0];
-  return actividades.value.filter(actividad => actividad.fechaInicio >= hoy);
-});
+// Computed para filtrar las item
+//  const itemFiltradas = computed(() => {
+//    const hoy = new Date().toISOString().split('T')[0];
+//    return item.value.filter(actividad => actividad.fechaInicio >= hoy);
+//  });
 
-// Función para obtener actividades desde la API
+// Función para obtener item desde la API
 
-api.get("admin/jobs").then((response) => {
-  console.log(response.data);
-  
-  actividades.value = response.data.jobs.map(job => ({
-    nombre: job.enterprise_id, // Reemplaza según la estructura de tu respuesta
-    trabajo: job.title,
-    fechas: job.fechas || [], // Ajusta según el nuevo campo de fechas
-    horaEntrada: job.in_time,
-    horaSalida: job.out_time,
-    completada: false, // O ajusta según lo necesario
-    confirmacionPREV: null, // O ajusta según lo necesario
-    confirmacionEmpresa: job.is_check_enterprise,
-  }));
-  
-  return actividades.value;
-});
+// Función para obtener item desde la API
+async function obteneritem() {
+  try {
+    const response = await api.get("admin/jobs");
+    const trabajos = response.data.jobs;
+    const jobDates = response.data.job_dates;
+    console.log(response.data)
+    // Estructura para almacenar item
+    const itemTemp = [];
 
- 
-   
+    // Iterar sobre los trabajos y combinar con las fechas
+    trabajos.forEach((job) => {
+      const fechas = jobDates[job.id - 1] || []; // Asegúrate de acceder correctamente al array de fechas
 
+      // Formatear las fechas
+      const fechasFormateadas = fechas.map(date => new Date(date.fecha.replace(/"/g, '')))
+                                       .sort((a, b) => a - b) // Ordenar las fechas
+                                       .map(date => date.toISOString().split('T')[0]); // Convertir a formato YYYY-MM-DD
 
-// Llama a la función en el mounted
+      // Agregar a la lista de item
+      itemTemp.push({
+        id: job.id,
+        nombre: job.enterprise_id ? `Empresa ${job.enterprise_id}` : "Sin nombre",
+        trabajo: job.trabajo || "Trabajo desconocido",
+        fechas: fechasFormateadas,
+        confirmacionPREV: job.confirmacion_prevencionista,
+        confirmacionEmpresa: job.confirmacion_empresa,
+      });
+    });
+    
 
+    // Ordenar las item por id de trabajo
+    item.value = itemTemp.sort((a, b) => a.id - b.id);
+    
+  } catch (error) {
+    console.error("Error al obtener item:", error);
+  }
+}
+
+// Llama a la función al montar el componente
+onMounted(obteneritem);
+const confirmarPREV = async (index) => {
+  try {
+    // Hacer una solicitud PATCH para actualizar el estado en la base de datos
+    console.log(item.value)
+    const jobId = item.value[index].id; // Asegúrate de que `id` existe
+    console.log('Job ID antes de la solicitud:', jobId);
+    console.log('Índice recibido:', index); // Verifica el índice
+  if (index < 0 || index >= item.value.length) {
+    console.error('Índice fuera de rango');
+    
+     }
+    await api.patch(`admin/jobs/${jobId}`, { confirmacion_prevencionista: 1 }, {
+    headers: {
+        'Authorization': `Bearer ${token}` // Asegúrate de que el token es válido
+    }});
+
+    // Actualizar el estado local
+    item.value[index].confirmacionPREV = true;
+  } catch (error) {
+    console.error("Error al confirmar la prevención:", error);
+  }
+};
+
+const denegarPREV = async (index) => {
+  try {
+    // Hacer una solicitud PATCH para actualizar el estado en la base de datos
+    const jobId = item.value[index].id; // Asegúrate de que `id` existe
+    console.log('Índice recibido:', index); // Verifica el índice
+  if (index < 0 || index >= item.value.length) {
+    console.error('Índice fuera de rango');
+    console.log('item.value:', item.value);}
+    console.log('Job ID antes de la solicitud:', jobId);
+    await api.patch(`admin/jobs/${jobId}`, { confirmacion_prevencionista: 0 }, {
+    headers: {
+        'Authorization': `Bearer ${token}` // Asegúrate de que el token es válido
+    }});
+
+    // Actualizar el estado local
+    item.value[index].confirmacionPREV = false;
+  } catch (error) {
+    console.error("Error al denegar la prevención:", error);
+  }
+};
 </script>
+
 
 <style scoped>
 @media only screen and (max-width: 1022px) {

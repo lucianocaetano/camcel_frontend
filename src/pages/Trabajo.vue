@@ -173,6 +173,12 @@ const timeE = ref("");
 const timeS = ref("");
 const step = ref(0);
 const dropdowns = ref({}); // Objeto para manejar el estado de cada desplegable
+function obtenerHoraActual() {
+    const ahora = new Date();
+    const horas = String(ahora.getHours()).padStart(2, '0');
+    const minutos = String(ahora.getMinutes()).padStart(2, '0');
+    return `${horas}:${minutos}`;
+}
 
 const toggleDropdown = (index) => {
   dropdowns.value[index] = !isDropdownOpen(index); // Cambia el estado del desplegable
@@ -267,10 +273,16 @@ const confirmarPREV = async (index) => {
     console.error('Índice fuera de rango');
     
      }
-    await api.patch(`admin/jobs/${jobId}`, { confirmacion_prevencionista: 1 }, {
+     await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { confirmacion_prevencionista: 1 }, {
     headers: {
-        'Authorization': `Bearer ${token}` // Asegúrate de que el token es válido
-    }});
+        'Authorization': `Bearer ${token}`
+    }
+});
+
+
+
+
+
 
     // Actualizar el estado local
     item.value[index].confirmacionPREV = true;
@@ -282,21 +294,29 @@ const confirmarPREV = async (index) => {
 const denegarPREV = async (index) => {
   try {
     // Hacer una solicitud PATCH para actualizar el estado en la base de datos
+    console.log(item.value)
     const jobId = item.value[index].id; // Asegúrate de que `id` existe
+    console.log('Job ID antes de la solicitud:', jobId);
     console.log('Índice recibido:', index); // Verifica el índice
   if (index < 0 || index >= item.value.length) {
     console.error('Índice fuera de rango');
-    console.log('item.value:', item.value);}
-    console.log('Job ID antes de la solicitud:', jobId);
-    await api.patch(`admin/jobs/${jobId}`, { confirmacion_prevencionista: 0 }, {
+    
+     }
+     await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { confirmacion_prevencionista:0}, {
     headers: {
-        'Authorization': `Bearer ${token}` // Asegúrate de que el token es válido
-    }});
+        'Authorization': `Bearer ${token}`
+    }
+});
 
+
+
+
+
+  this.obteneritem();
     // Actualizar el estado local
-    item.value[index].confirmacionPREV = false;
+    item.value[index].denegarPREV = false;
   } catch (error) {
-    console.error("Error al denegar la prevención:", error);
+    console.error("Error al confirmar la prevención:", error);
   }
 };
 </script>

@@ -126,7 +126,7 @@ export default {
         api.get(`admin/enterprises/${params.slug}`).then((response) => {
             console.log(response)
             empresa.value = response.data.enterprise
-            operators.value = response.data.operators
+           
             isLoading.value = false
         }).catch((err) => {
             isLoading.value = false

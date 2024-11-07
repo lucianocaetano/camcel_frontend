@@ -16,7 +16,7 @@
             <q-list>
 
               <q-separator />
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup to="/Config">
                 <q-item-section>Configuracion</q-item-section>
               </q-item>
 

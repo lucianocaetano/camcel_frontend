@@ -27,6 +27,13 @@ const routes = [
     ]
   },
   {
+    path: '/Config',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/UsuarioConfig.vue') }
+    ]
+  },
+  {
     path: '/empresas/',
     component: () => import('layouts/MainLayout.vue'),
     children: [

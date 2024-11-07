@@ -41,7 +41,9 @@
     <v-template v-for="empresa in empresas" :key="empresa.id">
       <div v-if="empresa.nombre.toLowerCase().includes(search.toLowerCase())">
         <card-empresas
-          v-if="filter_is_valid === null || empresa.is_valid === filter_is_valid"
+          v-if="
+            filter_is_valid === null || empresa.is_valid === filter_is_valid
+          "
           :empresa="empresa"
         />
       </div>

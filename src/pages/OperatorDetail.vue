@@ -31,6 +31,43 @@
         </tbody>
       </q-markup-table>
     </q-card>
+
+    <div style="width: 100%; height: 100vh" class="q-mt-lg">
+      <h4 class="text-h4 q-my-none">Documentaciones:</h4>
+      <q-markup-table flat bordered>
+        <thead class="bg-teal text-white">
+          <tr>
+            <th class="text-left">title</th>
+            <th class="text-left">expira</th>
+            <th class="text-left">autorizacion</th>
+            <th class="text-left">empresa</th>
+          </tr>
+        </thead>
+        <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
+          <tr
+            v-for="(document, index) in documents"
+            :key="index"
+            class="cursor-pointer"
+            @click="() => handleOpenDocumentMenu(document.id)"
+          >
+            <td class="text-left">
+              {{ document.title }}
+            </td>
+            <td class="text-left">
+              {{ document.expire }}
+            </td>
+            <td class="text-left">
+              <p :class="document.is_valid ? 'text-green' : 'text-red'">
+                {{ document.is_valid ? "Autorizado" : "No Autorizado" }}
+              </p>
+            </td>
+            <td class="text-left">
+              {{ document.enterprise }}
+            </td>
+          </tr>
+        </tbody>
+      </q-markup-table>
+    </div>
   </div>
 </template>
 <script>
@@ -44,6 +81,7 @@ export default {
     const router = useRouter();
 
     const operator = ref(null);
+    const documents = ref(null);
     const isLoading = ref(true);
 
     const handleOutClick = () => {
@@ -61,20 +99,37 @@ export default {
     };
 
     const handleEditClick = () => {
-        console.log("hola")
-    }
+      console.log("hola");
+    };
 
     api
       .get(`admin/enterprises/${params.enterprise}/operators/${params.pk}`)
       .then((response) => {
         operator.value = response.data.operator;
-        isLoading.value = false;
+        if (response.status === 200) {
+          api
+            .get(
+              `admin/enterprises/${params.enterprise}/operators/${params.pk}/documents`
+            )
+            .then((response) => {
+              documents.value = response.data.documents;
+            });
+        }
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        isLoading.value = false;
       });
 
-    return { operator, isLoading, handleOutClick, handleDeleteClick, handleEditClick };
+    return {
+      operator,
+      isLoading,
+      handleOutClick,
+      handleDeleteClick,
+      handleEditClick,
+    };
   },
 };
 </script>

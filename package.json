@@ -21,6 +21,7 @@
     "quasar": "^2.16.0",
     "recaptcha-v3": "^1.10.0",
     "vue": "^3.4.18",
+    "vue-pdf": "^4.3.0",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {

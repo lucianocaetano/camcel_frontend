@@ -6,7 +6,7 @@
       </q-card-section>
 
       <q-card-actions class="flex justify-between">
-        <p class="text-negative q-mx-md">
+        <p class="text-negative text-md">
           Warning: Recuerda que si borras un usuario empresario la empresa NO se borrara
         </p>
       </q-card-actions>

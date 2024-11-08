@@ -1,15 +1,17 @@
 <template>
   <div>
-    <div
-      v-if="!isLoading && !empresaNoExiste"
-      class="q-mx-auto"
-      style="max-width: 1000px"
-    >
+    <view-document
+      v-if="showDocumentMenu"
+      :show="showDocumentMenu"
+      :document="doc"
+      @handleCloseDocumentMenu="handleCloseDocumentMenu"
+    />
+    <div v-if="!isLoading" class="q-mx-auto" style="max-width: 1000px">
       <q-img
         :src="api_base_backend + empresa.image"
         alt="esta empresa no pose imagen"
         style="height: 350px"
-        :fit="mode"
+        :fit="cover"
       >
         <template v-slot:error>
           <div class="absolute-full text-subtitle2 flex flex-center">
@@ -93,19 +95,41 @@
         />
       </div>
 
-      <div>
-        <div
-          style="width: 100%; height: 100vh"
-          v-for="(document, index) in documents"
-          :key="index"
-        >
-          {{ document.title }}
-          <iframe
-            width="100%"
-            height="100%"
-            style="border: none"
-          ></iframe>
-        </div>
+      <div style="width: 100%; height: 100vh" class="q-mt-lg">
+        <h4 class="text-h4 q-my-none">Documentaciones:</h4>
+        <q-markup-table flat bordered>
+          <thead class="bg-teal text-white">
+            <tr>
+              <th class="text-left">title</th>
+              <th class="text-left">expira</th>
+              <th class="text-left">autorizacion</th>
+              <th class="text-left">empresa</th>
+            </tr>
+          </thead>
+          <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
+            <tr
+              v-for="(document, index) in documents"
+              :key="index"
+              class="cursor-pointer"
+              @click="() => handleOpenDocumentMenu(document.id)"
+            >
+              <td class="text-left">
+                {{ document.title }}
+              </td>
+              <td class="text-left">
+                {{ document.expire }}
+              </td>
+              <td class="text-left">
+                <p :class="document.is_valid ? 'text-green' : 'text-red'">
+                  {{ document.is_valid ? "Autorizado" : "No Autorizado" }}
+                </p>
+              </td>
+              <td class="text-left">
+                {{ document.enterprise }}
+              </td>
+            </tr>
+          </tbody>
+        </q-markup-table>
       </div>
     </div>
 
@@ -126,10 +150,12 @@ import { api } from "src/boot/axios";
 import { ref } from "vue";
 import { api_base_backend } from "../helpers.js";
 import { useEnterpriseStore } from "src/store/enterprise.store.js";
+import ViewDocument from "../components/ViewDocument.vue";
 
 export default {
   components: {
     MenuEditEmpresa,
+    ViewDocument,
   },
   setup() {
     const route = useRoute();
@@ -200,7 +226,6 @@ export default {
           await api
             .get(`admin/enterprises/${params.slug}/documents`)
             .then((response) => {
-              console.log(response.data.documents);
               documents.value = response.data.documents;
             });
         }
@@ -212,7 +237,6 @@ export default {
         }
       })
       .finally(() => {
-        console.log(documents);
         isLoading.value = false;
       });
 
@@ -231,7 +255,22 @@ export default {
       });
     };
 
+    const doc = ref(null);
+    const showDocumentMenu = ref(false);
+
+    const handleOpenDocumentMenu = (pk) => {
+      doc.value = pk;
+      showDocumentMenu.value = true;
+    };
+    const handleCloseDocumentMenu = () => {
+      showDocumentMenu.value = false;
+    };
+
     return {
+      doc,
+      showDocumentMenu,
+      handleOpenDocumentMenu,
+      handleCloseDocumentMenu,
       isLoading,
       empresa,
       empresaNoExiste,
@@ -252,5 +291,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

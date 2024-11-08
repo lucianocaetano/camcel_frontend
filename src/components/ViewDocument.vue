@@ -1,6 +1,10 @@
 <template>
   <q-dialog v-model="show">
-    <q-card style="min-width: 100%" class="q-mx-md" v-if="!isLoading">
+    <q-card
+      style="min-width: 100%; max-height: 1400px"
+      class="q-mx-md"
+      v-if="!isLoading"
+    >
       <q-card-section class="flex justify-between">
         <div>
           <div class="text-h6 q-mb-sm">{{ doc.title }}</div>
@@ -59,10 +63,15 @@ export default {
       type: Number,
       required: true,
     },
+    operator: {
+      type: Boolean,
+    },
   },
   setup(props, { emit }) {
     const show = toRef(props, "show");
-    const id = toRef(props, "document");
+    const isOperatorMenu = toRef(props, "operator");
+    console.log(isOperatorMenu.value);
+    const doc_id = toRef(props, "document");
 
     const isLoading = ref(true);
 
@@ -70,15 +79,16 @@ export default {
 
     const { params } = useRoute();
 
-    console.log(id.value);
-    api
-      .get(`admin/enterprises/${params.slug}/documents/${id.value}`)
-      .then((response) => {
-        if (response.status === 200) {
-          doc.value = response.data.document;
-        }
-        isLoading.value = false;
-      });
+    const operatorRoute = isOperatorMenu.value
+      ? `admin/enterprises/${params.enterprise}/operators/${params.pk}/documents/${doc_id.value}`
+      : `admin/enterprises/${params.slug}/documents/${doc_id.value}`;
+
+    api.get(operatorRoute).then((response) => {
+      if (response.status === 200) {
+        doc.value = response.data.document;
+      }
+      isLoading.value = false;
+    });
 
     const handleCloseMenu = () => {
       emit("handleCloseDocumentMenu");

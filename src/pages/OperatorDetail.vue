@@ -32,6 +32,14 @@
       </q-markup-table>
     </q-card>
 
+    <view-document
+      v-if="showDocumentMenu"
+      :show="showDocumentMenu"
+      :document="doc"
+      :operator="true"
+      @handleCloseDocumentMenu="handleCloseDocumentMenu"
+    />
+
     <div style="width: 100%; height: 100vh" class="q-mt-lg">
       <h4 class="text-h4 q-my-none">Documentaciones:</h4>
       <q-markup-table flat bordered>
@@ -62,7 +70,7 @@
               </p>
             </td>
             <td class="text-left">
-              {{ document.enterprise }}
+              {{ document.operator }}
             </td>
           </tr>
         </tbody>
@@ -74,8 +82,10 @@
 import { api } from "src/boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
+import ViewDocument from "../components/ViewDocument.vue";
 
 export default {
+  components: { ViewDocument },
   setup() {
     const { params } = useRoute();
     const router = useRouter();
@@ -122,9 +132,23 @@ export default {
       .finally(() => {
         isLoading.value = false;
       });
+    const doc = ref(null);
+    const showDocumentMenu = ref(false);
 
+    const handleOpenDocumentMenu = (pk) => {
+      doc.value = pk;
+      showDocumentMenu.value = true;
+    };
+    const handleCloseDocumentMenu = () => {
+      showDocumentMenu.value = false;
+    };
     return {
+      doc,
+      handleOpenDocumentMenu,
+      handleCloseDocumentMenu,
+      showDocumentMenu,
       operator,
+      documents,
       isLoading,
       handleOutClick,
       handleDeleteClick,

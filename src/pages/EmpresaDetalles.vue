@@ -81,6 +81,21 @@
         </div>
       </div>
       <div class="q-mt-md">
+        <div class="flex justify-end q-mb-sm">
+          <MenuCreateOperator
+            v-if="createOperator"
+            :show="createOperator"
+            @handleCloseCreateOperator="handleCloseCreateOperator"
+          />
+
+          <q-btn
+            label="Crear Operario"
+            class="q-mt-md q-mr-sm"
+            type="button"
+            color="primary"
+            @click="handleOpenCreateOperator"
+          />
+        </div>
         <q-table
           class="my-sticky-column-table"
           style="height: 400px; width: 100%"
@@ -145,6 +160,7 @@
 
 <script>
 import MenuEditEmpresa from "src/components/MenuEditEmpresa.vue";
+import MenuCreateOperator from "src/components/MenuCreateOperator.vue"
 import { useRoute, useRouter } from "vue-router";
 import { api } from "src/boot/axios";
 import { ref } from "vue";
@@ -156,6 +172,7 @@ export default {
   components: {
     MenuEditEmpresa,
     ViewDocument,
+    MenuCreateOperator
   },
   setup() {
     const route = useRoute();
@@ -212,17 +229,21 @@ export default {
       },
     ];
 
+    const fetchOperators = async () => {
+      await api
+        .get(`admin/enterprises/${params.slug}/operators`)
+        .then((response) => {
+          operators.value = response.data.operators;
+        });
+    };
+
     api
       .get(`admin/enterprises/${params.slug}`)
       .then(async (response) => {
         empresa.value = response.data.enterprise;
 
         if (response.status === 200) {
-          await api
-            .get(`admin/enterprises/${params.slug}/operators`)
-            .then((response) => {
-              operators.value = response.data.operators;
-            });
+          fetchOperators();
           await api
             .get(`admin/enterprises/${params.slug}/documents`)
             .then((response) => {
@@ -256,6 +277,7 @@ export default {
     };
 
     const doc = ref(null);
+    const createOperator = ref(false);
     const showDocumentMenu = ref(false);
 
     const handleOpenDocumentMenu = (pk) => {
@@ -266,7 +288,17 @@ export default {
       showDocumentMenu.value = false;
     };
 
+    const handleOpenCreateOperator = () => {
+      createOperator.value = true;
+    };
+    const handleCloseCreateOperator = () => {
+      createOperator.value = false;
+      fetchOperators();
+    };
     return {
+      createOperator,
+      handleCloseCreateOperator,
+      handleOpenCreateOperator,
       doc,
       showDocumentMenu,
       handleOpenDocumentMenu,

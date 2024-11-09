@@ -81,13 +81,13 @@
         </div>
       </div>
       <div class="q-mt-md">
-        <div class="flex justify-end q-mb-sm">
-          <MenuCreateOperator
-            v-if="createOperator"
-            :show="createOperator"
-            @handleCloseCreateOperator="handleCloseCreateOperator"
-          />
-
+        <MenuCreateOperator
+          v-if="createOperator"
+          :show="createOperator"
+          @handleCloseCreateOperator="handleCloseCreateOperator"
+        />
+        <div class="flex justify-between items-center q-my-md">
+          <h4 class="text-h4 q-my-none">Operarios:</h4>
           <q-btn
             label="Crear Operario"
             class="q-mt-md q-mr-sm"
@@ -96,36 +96,62 @@
             @click="handleOpenCreateOperator"
           />
         </div>
-        <q-table
-          class="my-sticky-column-table"
-          style="height: 400px; width: 100%"
-          flat
-          bordered
-          title="Operadores"
-          :rows="operators"
-          :columns="columnOperators"
-          row-key="id"
-          @row-click="onRowClick"
-          virtual-scroll
-        />
+        <q-markup-table flat bordered>
+          <thead class="bg-dark text-white">
+            <tr>
+              <th class="text-left">Cedula</th>
+              <th class="text-left">Nombre</th>
+              <th class="text-left">Autorizado</th>
+              <th class="text-left">Cargo</th>
+              <th class="text-left">Acciones</th>
+            </tr>
+          </thead>
+          <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
+            <tr
+              v-for="(operator, index) in operators"
+              :key="index"
+              class="cursor-pointer"
+              @click="() => handleClickOperator(operator.id)"
+            >
+              <td class="text-left">
+                {{ operator.ci }}
+              </td>
+              <td class="text-left">
+                {{ operator.name }}
+              </td>
+              <td class="text-left">
+                <p :class="operator.is_valid ? 'text-green' : 'text-red'">
+                  {{ operator.is_valid ? "Autorizado" : "No Autorizado" }}
+                </p>
+              </td>
+              <td class="text-left">
+                {{ operator.cargo }}
+              </td>
+              <td class="text-left"></td>
+            </tr>
+          </tbody>
+        </q-markup-table>
       </div>
 
-      <div style="width: 100%; height: 100vh" class="q-mt-lg">
-        <h4 class="text-h4 q-my-none">Documentaciones:</h4>
+      <div style="width: 100%; height: 100vh" class="q-mt-xl">
+        <h4 class="text-h4 q-my-none">Documentos de la empresa:</h4>
         <q-markup-table flat bordered>
           <thead class="bg-teal text-white">
             <tr>
-              <th class="text-left">title</th>
-              <th class="text-left">expira</th>
-              <th class="text-left">autorizacion</th>
-              <th class="text-left">empresa</th>
+              <th class="text-left">Title</th>
+              <th class="text-left">Expira</th>
+              <th class="text-left">Autorizacion</th>
+              <th class="text-left">Empresa</th>
+              <th class="text-left">Acciones</th>
             </tr>
           </thead>
           <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
             <tr
               v-for="(document, index) in documents"
               :key="index"
-              class="cursor-pointer"
+              :class="
+                document.is_valid ? 'cursor-pointer' : 'cursor-pointer'
+              "
               @click="() => handleOpenDocumentMenu(document.id)"
             >
               <td class="text-left">
@@ -141,6 +167,22 @@
               </td>
               <td class="text-left">
                 {{ document.enterprise }}
+              </td>
+              <td class="text-center">
+                <q-btn
+                  v-if="document.is_valid"
+                  label="Deprecar"
+                  type="button"
+                  color="negative"
+                  class="q-ml-sm"
+                />
+                <q-btn
+                    v-else
+                  label="Autorizar"
+                  type="button"
+                  color="primary"
+                  class="q-ml-sm"
+                />
               </td>
             </tr>
           </tbody>
@@ -212,32 +254,13 @@ export default {
       });
     };
 
-    const columnOperators = [
-      { name: "ci", label: "Cédula", field: "ci", align: "left" },
-      { name: "name", label: "Nombre", field: "name", align: "left" },
-      {
-        name: "is_valid",
-        label: "Autorizado",
-        field: "is_valid",
-        align: "left",
-      },
-      {
-        name: "cargo",
-        label: "Cargo",
-        field: "cargo",
-        align: "left",
-      },
-    ];
-
     const fetchOperators = async () => {
-      await api
-        .get(`enterprises/${params.slug}/operators`)
-        .then((response) => {
-          operators.value = response.data.operators.map((data) => ({
-            ...data,
-            is_valid: data.is_valid ? "Autorizado" : "No Autorizado",
-          }));
-        });
+      await api.get(`enterprises/${params.slug}/operators`).then((response) => {
+        operators.value = response.data.operators.map((data) => ({
+          ...data,
+          is_valid: data.is_valid ? "Autorizado" : "No Autorizado",
+        }));
+      });
     };
 
     api
@@ -254,7 +277,7 @@ export default {
         }
       })
       .catch((err) => {
-          console.error(err)
+        console.error(err);
         isLoading.value = false;
         if (err?.response?.status === 404) {
           empresaNoExiste.value = true;
@@ -269,11 +292,11 @@ export default {
       menuEmpresa.value = false;
     };
 
-    const onRowClick = (e, item) => {
+    const handleClickOperator = (pk) => {
       router.push({
         name: "operators-detail",
         params: {
-          pk: item.id,
+          pk,
           enterprise: params.slug,
         },
       });
@@ -310,10 +333,9 @@ export default {
       empresa,
       empresaNoExiste,
       api_base_backend,
-      columnOperators,
       operators,
       handleValidEnterprise,
-      onRowClick,
+      handleClickOperator,
       handleCloseMenuEmpresa,
       handleOpenMenuEmpresa,
       handleDesvalidEnterprise,

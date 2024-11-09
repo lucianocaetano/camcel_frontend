@@ -110,7 +110,7 @@
             <tr
               v-for="(operator, index) in operators"
               :key="index"
-              class="cursor-pointer"
+              :class="`${operator.is_valid ? '' : 'bg-grey-4'} cursor-pointer`"
               @click="() => handleClickOperator(operator.id)"
             >
               <td class="text-left">
@@ -149,9 +149,7 @@
             <tr
               v-for="(document, index) in documents"
               :key="index"
-              :class="
-                document.is_valid ? 'cursor-pointer' : 'cursor-pointer'
-              "
+              :class="`${document.is_valid ? '' : 'bg-grey-4'} cursor-pointer`"
               @click="() => handleOpenDocumentMenu(document.id)"
             >
               <td class="text-left">
@@ -177,7 +175,7 @@
                   class="q-ml-sm"
                 />
                 <q-btn
-                    v-else
+                  v-else
                   label="Autorizar"
                   type="button"
                   color="primary"
@@ -256,10 +254,7 @@ export default {
 
     const fetchOperators = async () => {
       await api.get(`enterprises/${params.slug}/operators`).then((response) => {
-        operators.value = response.data.operators.map((data) => ({
-          ...data,
-          is_valid: data.is_valid ? "Autorizado" : "No Autorizado",
-        }));
+        operators.value = response.data.operators;
       });
     };
 

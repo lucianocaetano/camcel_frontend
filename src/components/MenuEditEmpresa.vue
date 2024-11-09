@@ -91,14 +91,14 @@ export default {
     const users = ref(null);
 
     api
-      .get("admin/users", {
+      .get("users", {
         params: {
           rol: "users_enterprise",
         },
       })
       .then((response) => {
         isLoadingUser.value = false;
-        users.value = response.data;
+        users.value = response.data.users;
       });
 
     const handleClose = () => {
@@ -108,7 +108,7 @@ export default {
     const handleUpdateEnterprise = () => {
       api
         .put(
-          "admin/enterprises/" + empresa.value.slug,
+          "enterprises/" + empresa.value.slug,
           {
             ...empresa.value,
             user_id: empresa.value.user?.id,

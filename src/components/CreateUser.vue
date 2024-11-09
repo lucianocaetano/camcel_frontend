@@ -119,7 +119,7 @@ export default {
 
       api
         .post(
-          "admin/users",
+          "users",
           {
             ...data,
             rol: data.rol.value,

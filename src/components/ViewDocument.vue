@@ -1,8 +1,8 @@
 <template>
   <q-dialog v-model="show">
     <q-card
-      style="min-width: 100%; max-height: 1400px"
-      class="q-mx-md"
+      style="height: 100%; width: 100%; max-width: 1500px; max-height: 1000px"
+      class="q-mx-md flex column justify-between"
       v-if="!isLoading"
     >
       <q-card-section class="flex justify-between">
@@ -26,11 +26,14 @@
         </div>
       </q-card-section>
 
-      <q-card-actions class="flex justify-between">
+      <q-card-actions class="q-pa-none" style="flex-grow: 1; overflow: hidden; padding: 0 10px;">
         <iframe
           :src="api_base_backend + doc.url_document"
-          style="width: 100%; min-height: 400px"
+          class="w-full"
+          style="flex-grow: 1; border: none; height: 100%; height: 100%"
         />
+      </q-card-actions>
+      <q-card-actions class="flex justify-between" style="height: auto">
         <q-btn
           flat
           label="Cerrar"
@@ -80,8 +83,8 @@ export default {
     const { params } = useRoute();
 
     const operatorRoute = isOperatorMenu.value
-      ? `admin/enterprises/${params.enterprise}/operators/${params.pk}/documents/${doc_id.value}`
-      : `admin/enterprises/${params.slug}/documents/${doc_id.value}`;
+      ? `enterprises/${params.enterprise}/operators/${params.pk}/documents/${doc_id.value}`
+      : `enterprises/${params.slug}/documents/${doc_id.value}`;
 
     api.get(operatorRoute).then((response) => {
       if (response.status === 200) {

@@ -160,7 +160,7 @@
 
 <script>
 import MenuEditEmpresa from "src/components/MenuEditEmpresa.vue";
-import MenuCreateOperator from "src/components/MenuCreateOperator.vue"
+import MenuCreateOperator from "src/components/MenuCreateOperator.vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from "src/boot/axios";
 import { ref } from "vue";
@@ -172,7 +172,7 @@ export default {
   components: {
     MenuEditEmpresa,
     ViewDocument,
-    MenuCreateOperator
+    MenuCreateOperator,
   },
   setup() {
     const route = useRoute();
@@ -192,7 +192,7 @@ export default {
 
     const handleValidEnterprise = () => {
       api
-        .patch(`admin/enterprises/${params.slug}`, {
+        .patch(`enterprises/${params.slug}`, {
           is_valid: true,
         })
         .then((response) => {
@@ -204,7 +204,7 @@ export default {
     };
 
     const handleDesvalidEnterprise = () => {
-      api.delete(`admin/enterprises/${params.slug}`).then((response) => {
+      api.delete(`enterprises/${params.slug}`).then((response) => {
         if (response.status === 200) {
           enterpriseStore.removeEnterprise(params.slug);
           router.push("/empresas");
@@ -231,27 +231,30 @@ export default {
 
     const fetchOperators = async () => {
       await api
-        .get(`admin/enterprises/${params.slug}/operators`)
+        .get(`enterprises/${params.slug}/operators`)
         .then((response) => {
-          operators.value = response.data.operators;
+          operators.value = response.data.operators.map((data) => ({
+            ...data,
+            is_valid: data.is_valid ? "Autorizado" : "No Autorizado",
+          }));
         });
     };
 
     api
-      .get(`admin/enterprises/${params.slug}`)
+      .get(`enterprises/${params.slug}`)
       .then(async (response) => {
         empresa.value = response.data.enterprise;
-
         if (response.status === 200) {
           fetchOperators();
           await api
-            .get(`admin/enterprises/${params.slug}/documents`)
+            .get(`enterprises/${params.slug}/documents`)
             .then((response) => {
               documents.value = response.data.documents;
             });
         }
       })
       .catch((err) => {
+          console.error(err)
         isLoading.value = false;
         if (err?.response?.status === 404) {
           empresaNoExiste.value = true;
@@ -277,7 +280,6 @@ export default {
     };
 
     const doc = ref(null);
-    const createOperator = ref(false);
     const showDocumentMenu = ref(false);
 
     const handleOpenDocumentMenu = (pk) => {
@@ -288,6 +290,7 @@ export default {
       showDocumentMenu.value = false;
     };
 
+    const createOperator = ref(false);
     const handleOpenCreateOperator = () => {
       createOperator.value = true;
     };

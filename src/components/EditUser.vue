@@ -115,7 +115,7 @@ export default {
     const handleEditUser = () => {
       api
         .patch(
-          "admin/users/" + props.user.id,
+          "users/" + props.user.id,
           {
             ...data,
             rol: data.rol.value,

@@ -3,7 +3,9 @@
     <div class="flex justify-between q-mb-md">
       <q-btn color="primary" flat @click="handleOutClick">salir</q-btn>
       <div class="flex justify-between">
-        <q-btn color="primary q-mr-md" @click="handleEditClick">Editar</q-btn>
+        <q-btn color="primary q-mr-md" @click="handleOpenUpdateOperator"
+          >Editar</q-btn
+        >
         <q-btn color="negative" @click="handleDeleteClick">Borrar</q-btn>
       </div>
     </div>
@@ -31,6 +33,12 @@
         </tbody>
       </q-markup-table>
     </q-card>
+    <MenuEditOperator
+      v-if="updateOperator"
+      @handleCloseUpdateOperator="handleCloseUpdateOperator"
+      :operator="operator"
+      :show="updateOperator"
+    />
 
     <view-document
       v-if="showDocumentMenu"
@@ -83,9 +91,10 @@ import { api } from "src/boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import ViewDocument from "../components/ViewDocument.vue";
+import MenuEditOperator from "src/components/MenuEditOperator.vue";
 
 export default {
-  components: { ViewDocument },
+  components: { ViewDocument, MenuEditOperator },
   setup() {
     const { params } = useRoute();
     const router = useRouter();
@@ -100,7 +109,7 @@ export default {
 
     const handleDeleteClick = () => {
       api
-        .delete(`admin/enterprises/${params.enterprise}/operators/${params.pk}`)
+        .delete(`enterprises/${params.enterprise}/operators/${params.pk}`)
         .then((response) => {
           if (response.status == 200) {
             handleOutClick();
@@ -108,30 +117,35 @@ export default {
         });
     };
 
-    const handleEditClick = () => {
-      console.log("hola");
+    const fetchOperator = () => {
+      api
+        .get(`enterprises/${params.enterprise}/operators/${params.pk}`)
+        .then((response) => {
+          operator.value = {
+            ...response.data.operator,
+            is_valid: response.data.operator.is_valid
+              ? "Autorizado"
+              : "No Autorizado",
+          };
+          if (response.status === 200) {
+            api
+              .get(
+                `enterprises/${params.enterprise}/operators/${params.pk}/documents`
+              )
+              .then((response) => {
+                documents.value = response.data.documents;
+              });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          isLoading.value = false;
+        });
     };
 
-    api
-      .get(`admin/enterprises/${params.enterprise}/operators/${params.pk}`)
-      .then((response) => {
-        operator.value = response.data.operator;
-        if (response.status === 200) {
-          api
-            .get(
-              `admin/enterprises/${params.enterprise}/operators/${params.pk}/documents`
-            )
-            .then((response) => {
-              documents.value = response.data.documents;
-            });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => {
-        isLoading.value = false;
-      });
+    fetchOperator();
     const doc = ref(null);
     const showDocumentMenu = ref(false);
 
@@ -142,7 +156,20 @@ export default {
     const handleCloseDocumentMenu = () => {
       showDocumentMenu.value = false;
     };
+
+    const updateOperator = ref(false);
+    const handleOpenUpdateOperator = () => {
+      updateOperator.value = true;
+    };
+    const handleCloseUpdateOperator = () => {
+      updateOperator.value = false;
+      fetchOperator();
+    };
+
     return {
+      updateOperator,
+      handleCloseUpdateOperator,
+      handleOpenUpdateOperator,
       doc,
       handleOpenDocumentMenu,
       handleCloseDocumentMenu,
@@ -152,7 +179,6 @@ export default {
       isLoading,
       handleOutClick,
       handleDeleteClick,
-      handleEditClick,
     };
   },
 };

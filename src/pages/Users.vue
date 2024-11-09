@@ -133,7 +133,7 @@ export default {
     const id_user_delete = ref(null);
 
     const handleDeleteUser = (id) => {
-      api.delete(`admin/users/${id}}`).then((response) => {
+      api.delete(`users/${id}}`).then((response) => {
         if (response.status === 200) {
           users.value = users.value.filter((user) => user.id !== id);
         }
@@ -161,9 +161,8 @@ export default {
         role,
       };
 
-      api.get("admin/users", { params }).then((response) => {
+      api.get("users", { params }).then((response) => {
         isLoading.value = false;
-          console.log(response)
         users.value = response.data.users;
       });
     };

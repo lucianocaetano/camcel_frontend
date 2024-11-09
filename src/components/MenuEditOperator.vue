@@ -2,19 +2,19 @@
   <q-dialog v-model="show">
     <q-card style="width: 900px">
       <q-card-section>
-        <div class="text-h6">Crear operador</div>
+        <div class="text-h6">Editar operador</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-form @submit.prevent="handleCreateOperator">
+        <q-form @submit.prevent="handleUpdateOperator">
           <q-input
             name="Cédula"
             required
             label="Cédula"
-            v-model="dataCreateOperator.ci"
+            v-model="dataUpdateOperator.ci"
           />
           <div
-            v-for="(error, index) in error_create?.ci"
+            v-for="(error, index) in error_update?.ci"
             :key="index"
             class="q-mt-sm"
           >
@@ -27,10 +27,10 @@
             name="Nombre"
             required
             label="Nombre"
-            v-model="dataCreateOperator.name"
+            v-model="dataUpdateOperator.name"
           />
           <div
-            v-for="(error, index) in error_create?.nombre"
+            v-for="(error, index) in error_update?.nombre"
             :key="index"
             class="q-mt-sm"
           >
@@ -41,17 +41,17 @@
 
           <q-checkbox
             label="Autorizado"
-            v-model="dataCreateOperator.authorized"
+            v-model="dataUpdateOperator.authorized"
           />
 
           <q-input
             name="Cargo"
             required
             label="Cargo"
-            v-model="dataCreateOperator.role_description"
+            v-model="dataUpdateOperator.role_description"
           />
           <div
-            v-for="(error, index) in error_create?.authorize"
+            v-for="(error, index) in error_update?.authorize"
             :key="index"
             class="q-mt-sm"
           >
@@ -60,7 +60,7 @@
             </span>
           </div>
 
-          <q-btn label="Crear" class="q-mt-md" type="submit" color="primary" />
+          <q-btn label="Editar" class="q-mt-md" type="submit" color="primary" />
         </q-form>
       </q-card-section>
 
@@ -70,7 +70,7 @@
           label="Cerrar"
           color="primary"
           v-close-popup
-          @click="handleCloseCreateOperator"
+          @click="handleCloseUpdateOperator"
         />
       </q-card-actions>
     </q-card>
@@ -88,48 +88,52 @@ export default {
       type: Boolean,
       required: true,
     },
+    operator: {
+      type: Object,
+      required: true,
+    },
   },
   setup(props, { emit }) {
     const show = toRef(props, "show");
     const { params } = useRoute();
 
-    const dataCreateOperator = reactive({
-      ci: "",
-      name: "",
-      authorized: false,
-      role_description: null,
+    const dataUpdateOperator = reactive({
+      ci: props.operator.ci,
+      name: props.operator.name,
+      authorized: props.operator.is_valid === "Autorizado"? true: false,
+      role_description: props.operator.cargo,
     });
 
-    const error_create = ref(null);
+    const error_update = ref(null);
 
-    const handleCloseCreateOperator = () => {
-      emit("handleCloseCreateOperator");
+    const handleCloseUpdateOperator = () => {
+      emit("handleCloseUpdateOperator");
     };
 
-    const handleCreateOperator = () => {
+    const handleUpdateOperator = () => {
       api
-        .post(
-          `enterprises/${params.slug}/operators`,
-          dataCreateOperator,
+        .put(
+          `enterprises/${params.enterprise}/operators/${props.operator.id}`,
+          dataUpdateOperator
         )
         .then(() => {
-          handleCloseCreateOperator();
+          handleCloseUpdateOperator();
         })
         .catch((err) => {
-              console.log(err)
+          console.log(err);
           if (err.response.status === 422) {
             const messages = err.response.data.errors;
-            error_create.value = messages;
+            error_update.value = messages;
           }
         });
     };
 
     return {
-      dataCreateOperator,
-      handleCreateOperator,
+      dataUpdateOperator,
+      handleUpdateOperator,
+      handleCloseUpdateOperator,
+      error_update,
       show,
-      handleCloseCreateOperator,
-      error_create,
     };
   },
 };

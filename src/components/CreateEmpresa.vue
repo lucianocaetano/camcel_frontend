@@ -112,13 +112,13 @@ export default {
     const isLoadingUser = ref(true);
     const users = ref(null);
 
-    api.get("admin/users", {
+    api.get("users", {
       params: {
-        "role": "users_enterprise"
+        rol: "users_enterprise"
       }
     }).then((response) => {
       isLoadingUser.value = false;
-      users.value = response.data;
+      users.value = response.data.users;
     });
 
     const show = toRef(props, "show");
@@ -140,7 +140,7 @@ export default {
     const handleCreateEnterprise = () => {
       api
         .post(
-          "admin/enterprises",
+          "enterprises",
           {
             ...dataCreateEnterprise,
             user_id: dataCreateEnterprise.user_id?.id,

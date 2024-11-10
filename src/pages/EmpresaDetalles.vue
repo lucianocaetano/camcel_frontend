@@ -103,7 +103,7 @@
               <th class="text-left">Nombre</th>
               <th class="text-left">Autorizado</th>
               <th class="text-left">Cargo</th>
-              <th class="text-left">Acciones</th>
+              <th class="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
@@ -127,14 +127,29 @@
               <td class="text-left">
                 {{ operator.cargo }}
               </td>
-              <td class="text-left"></td>
+              <td class="text-center">
+                <q-btn
+                  label="Eliminar"
+                  type="button"
+                  color="negative"
+                  class="q-ml-sm"
+                />
+              </td>
             </tr>
           </tbody>
         </q-markup-table>
       </div>
 
       <div style="width: 100%; height: 100vh" class="q-mt-xl">
-        <h4 class="text-h4 q-my-none">Documentos de la empresa:</h4>
+        <div class="flex justify-between q-mb-md items-center">
+          <h4 class="text-h4 q-my-none">Documentos de la empresa:</h4>
+          <q-btn
+            label="Añadir Documento"
+            class="q-mt-md q-mr-sm"
+            type="button"
+            color="primary"
+          />
+        </div>
         <q-markup-table flat bordered>
           <thead class="bg-teal text-white">
             <tr>
@@ -142,7 +157,7 @@
               <th class="text-left">Expira</th>
               <th class="text-left">Autorizacion</th>
               <th class="text-left">Empresa</th>
-              <th class="text-left">Acciones</th>
+              <th class="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">

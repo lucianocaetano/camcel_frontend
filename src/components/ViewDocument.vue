@@ -73,7 +73,6 @@ export default {
   setup(props, { emit }) {
     const show = toRef(props, "show");
     const isOperatorMenu = toRef(props, "operator");
-    console.log(isOperatorMenu.value);
     const doc_id = toRef(props, "document");
 
     const isLoading = ref(true);

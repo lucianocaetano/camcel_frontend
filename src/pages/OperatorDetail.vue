@@ -49,22 +49,30 @@
         @handleCloseDocumentMenu="handleCloseDocumentMenu"
       />
 
-      <div style="width: 100%; height: 100vh" class="q-mt-lg">
-        <h4 class="text-h4 q-my-none">Documentaciones:</h4>
+      <div style="width: 100%; height: 100vh" class="q-mt-xl">
+        <div class="flex justify-between q-mb-md items-center">
+          <h4 class="text-h4 q-my-none">Documentos de la empresa:</h4>
+          <q-btn
+            label="Añadir Documento"
+            class="q-mt-md q-mr-sm"
+            type="button"
+            color="primary"
+          />
+        </div>
         <q-markup-table flat bordered>
           <thead class="bg-teal text-white">
             <tr>
-              <th class="text-left">title</th>
-              <th class="text-left">expira</th>
-              <th class="text-left">autorizacion</th>
-              <th class="text-left">empresa</th>
+              <th class="text-left">Title</th>
+              <th class="text-left">Expira</th>
+              <th class="text-left">Autorizacion</th>
+              <th class="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
             <tr
               v-for="(document, index) in documents"
               :key="index"
-              class="cursor-pointer"
+              :class="`${document.is_valid ? '' : 'bg-grey-4'} cursor-pointer`"
               @click="() => handleOpenDocumentMenu(document.id)"
             >
               <td class="text-left">
@@ -78,8 +86,21 @@
                   {{ document.is_valid ? "Autorizado" : "No Autorizado" }}
                 </p>
               </td>
-              <td class="text-left">
-                {{ document.operator }}
+              <td class="text-center">
+                <q-btn
+                  v-if="document.is_valid"
+                  label="Deprecar"
+                  type="button"
+                  color="negative"
+                  class="q-ml-sm"
+                />
+                <q-btn
+                  v-else
+                  label="Autorizar"
+                  type="button"
+                  color="primary"
+                  class="q-ml-sm"
+                />
               </td>
             </tr>
           </tbody>

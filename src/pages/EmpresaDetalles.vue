@@ -128,12 +128,9 @@
                 {{ operator.cargo }}
               </td>
               <td class="text-center">
-                <q-btn
-                  label="Eliminar"
-                  type="button"
-                  color="negative"
-                  class="q-ml-sm"
-                />
+                <q-btn type="button" class="text-h5 text-negative">
+                  <span class="mdi mdi-trash-can"></span>
+                </q-btn>
               </td>
             </tr>
           </tbody>
@@ -182,20 +179,25 @@
                 {{ document.enterprise }}
               </td>
               <td class="text-center">
+                <q-btn type="button" class="text-h6 text-secondary">
+                  <span class="mdi mdi-pencil"></span>
+                </q-btn>
+
                 <q-btn
                   v-if="document.is_valid"
-                  label="Deprecar"
                   type="button"
-                  color="negative"
-                  class="q-ml-sm"
-                />
+                  class="q-ml-md text-h6 text-negative"
+                >
+                  <span class="mdi mdi-thumb-down"></span>
+                </q-btn>
+
                 <q-btn
                   v-else
-                  label="Autorizar"
                   type="button"
-                  color="primary"
-                  class="q-ml-sm"
-                />
+                  class="q-ml-md text-h6 text-primary"
+                >
+                  <span class="mdi mdi-thumb-up"></span>
+                </q-btn>
               </td>
             </tr>
           </tbody>

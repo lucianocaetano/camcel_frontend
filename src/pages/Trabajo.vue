@@ -240,6 +240,7 @@ import { api } from "src/boot/axios";
 import { useUserStore } from 'src/store/user.store';
 
 
+
 //constantes
 
 
@@ -287,47 +288,37 @@ function openDialog(item) {
 
 const confirmarPREV = async (index) => {
   try {
-    // Hacer una solicitud PATCH para actualizar el estado en la base de datos
-    console.log(item.value)
-    const jobId = item.value[index].id; // Asegúrate de que `id` existe
-    console.log('Job ID antes de la solicitud:', jobId);
-    console.log('Índice recibido:', index); // Verifica el índice
-  if (index < 0 || index >= item.value.length) {
-    console.error('Índice fuera de rango');
+    const jobId = item.value[index].id;
+    console.log("Enviando solicitud para confirmar prevención, Job ID:", jobId);
+
+    const response = await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { 
+      confirmacion_prevencionista: 1 
+    }, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    console.log("Respuesta del backend:", response.data);
     
-     }
-     await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { confirmacion_prevencionista: 1 }, {
-    headers: {
-        'Authorization': `Bearer ${token}`
-    }
-});
-  // Actualizar el estado local
-    item.value[index].confirmacionPREV = true;
   } catch (error) {
-    console.error("Error al confirmar la prevención:", error);
+    console.error("Error al confirmar la prevención:", error.response?.data || error.message);
   }
 };
 
 const denegarPREV = async (index) => {
   try {
-    // Hacer una solicitud PATCH para actualizar el estado en la base de datos
-    console.log(item.value)
-    const jobId = item.value[index].id; // Asegúrate de que `id` existe
-    console.log('Job ID antes de la solicitud:', jobId);
-    console.log('Índice recibido:', index); // Verifica el índice
-  if (index < 0 || index >= item.value.length) {
-    console.error('Índice fuera de rango');
+    const jobId = item.value[index].id;
+    console.log("Enviando solicitud para denegar prevención, Job ID:", jobId);
+
+    const response = await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { 
+      confirmacion_prevencionista: 0 
+    }, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    console.log("Respuesta del backend:", response.data);
     
-     }
-     await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { confirmacion_prevencionista: 0 }, {
-    headers: {
-        'Authorization': `Bearer ${token}`
-    }
-});
-  // Actualizar el estado local
-    item.value[index].confirmacionPREV = true;
   } catch (error) {
-    console.error("Error al denengar la prevención:", error);
+    console.error("Error al denegar la prevención:", error.response?.data || error.message);
   }
 };
 
@@ -419,10 +410,64 @@ async function obteneritem() {
     }
 }
 
+//const listenForJobUpdates = () => {
+  //  const echo = getCurrentInstance().appContext.config.globalProperties.$echo;
+
+    //if (!echo) {
+      //  console.error("Echo no está definido");
+        //return; // Salir si Echo no está disponible
+    //}
+
+//    const channel = echo.channel('jobs');
+
+    // Escuchar el evento JobUpdated
+//    channel.listen('JobUpdated', (e) => {
+  //      console.log("Evento JobUpdated recibido:", e); // Agrega este log
+    //    const updatedJob = e.job;
+//        const index = jobs.value.findIndex(job => job.id === updatedJob.id);
+//        
+  //      if (index !== -1) {
+            // Actualiza el trabajo existente
+    //        jobs.value[index] = updatedJob; // Vue 3 detecta cambios automáticamente en refs
+    //    } else {
+            // Si es un nuevo trabajo, añade
+   //         jobs.value.push(updatedJob);
+   //     }
+  //  });
+
+   
+//};
+
+
+
+
+onMounted(() => {
+      const echo = getCurrentInstance().appContext.config.globalProperties.$echo;
+      
+      echo.channel('jobs-channel')
+        .listen('.job-updated', (data) => {
+          console.log('Evento recibido:', data);
+
+          // Asegúrate de que la propiedad "job" esté presente
+          if (data.job) {
+            const jobIndex = jobs.findIndex(job => job.id === data.job.id);
+            if (jobIndex !== -1) {
+              jobs[jobIndex] = data.job;  // Actualiza el trabajo con los nuevos datos
+            } else {
+              jobs.push(data.job);  // Si el trabajo no existe, lo agrega
+            }
+          }
+        });
+    });
+
+
+
 // Llama a la función al montar el componente
-onMounted(
-  obteneritem
-)
+
+onMounted(() => {
+    
+    obteneritem();
+});
 
 </script>
 

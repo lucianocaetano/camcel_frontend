@@ -13,7 +13,7 @@
             :key="index"
             class="q-mt-sm"
           >
-            <span style="2px;" class="q-pa-xs bg-negative text-white">{{
+            <span  class="q-pa-xs bg-negative text-white">{{
               error
             }}</span>
           </div>
@@ -119,7 +119,7 @@ export default {
 
       api
         .post(
-          "admin/users",
+          "users",
           {
             ...data,
             rol: data.rol.value,

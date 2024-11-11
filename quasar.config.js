@@ -23,6 +23,7 @@ module.exports = configure(function (/* ctx */) {
     boot: [
       "pinia",
       'axios',
+      'laravel-echo',
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css

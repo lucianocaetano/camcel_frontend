@@ -149,7 +149,7 @@ export default {
 
     const handleValidEnterprise = () => {
       api
-        .patch(`admin/enterprises/${params.slug}`, {
+        .patch(`enterprises/${params.slug}`, {
           is_valid: true,
         })
         .then((response) => {
@@ -161,7 +161,7 @@ export default {
     };
 
     const handleDesvalidEnterprise = () => {
-      api.delete(`admin/enterprises/${params.slug}`).then((response) => {
+      api.delete(`enterprises/${params.slug}`).then((response) => {
         if (response.status === 200) {
           enterpriseStore.removeEnterprise(params.slug);
           router.push("/empresas");
@@ -187,18 +187,18 @@ export default {
     ];
 
     api
-      .get(`admin/enterprises/${params.slug}`)
+      .get(`enterprises/${params.slug}`)
       .then(async (response) => {
         empresa.value = response.data.enterprise;
 
         if (response.status === 200) {
           await api
-            .get(`admin/enterprises/${params.slug}/operators`)
+            .get(`enterprises/${params.slug}/operators`)
             .then((response) => {
               operators.value = response.data.operators;
             });
           await api
-            .get(`admin/enterprises/${params.slug}/documents`)
+            .get(`enterprises/${params.slug}/documents`)
             .then((response) => {
               console.log(response.data.documents);
               documents.value = response.data.documents;

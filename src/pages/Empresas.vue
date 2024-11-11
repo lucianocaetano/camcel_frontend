@@ -78,7 +78,7 @@ export default {
       enterpriseCreate.value = false;
     };
 
-    api.get("admin/enterprises").then((response) => {
+    api.get("enterprises").then((response) => {
       isLoading.value = false;
       enterpriseStore.setEnterprises(response.data);
     });

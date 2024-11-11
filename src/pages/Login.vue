@@ -105,7 +105,7 @@
    
   }
   .uno{
-      background-image: linear-gradient(rgba(18, 68, 139, 0.5), rgba(18, 68, 139, 0.5)), url("/imagenes/mensaje.png");
+      background-image: linear-gradient(rgba(18, 68, 139, 0.5), rgba(18, 68, 139, 0.5)), url("/imagenes/Fondo2.jpeg");
       background-size: 100% 50%;
       height: 100%;
   }
@@ -118,7 +118,7 @@
   }
   
   .imagen{
-     background-image: url("/imagenes/fondo.png");
+     background-image: url("/imagenes/Fondo1.jpeg");
       height: 100%;
   }
   .boton_enviar{

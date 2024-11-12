@@ -2,8 +2,8 @@
   <div class="q-pa-md">
     <q-header
       elevated
-      style="padding: 0 20px"
-      class="row justify-between bg-teal-10"
+      style="padding: 0 20px; background: #025B6D;"
+      class="row justify-between"
     >
       <div>
         <q-toolbar class="row items-center">

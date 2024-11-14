@@ -1,6 +1,10 @@
 <template>
   <div class="q-pa-md">
-    <q-header elevated style="padding: 0 20px;" class="row justify-between bg-teal-10">
+    <q-header
+      elevated
+      style="padding: 0 20px"
+      class="row justify-between bg-teal-10"
+    >
       <div>
         <q-toolbar class="row items-center">
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
@@ -34,7 +38,7 @@
         </q-btn>
       </div>
     </q-header>
-    
+
     <q-drawer
       v-model="drawer"
       show-if-above
@@ -65,15 +69,15 @@
       </q-scroll-area>
     </q-drawer>
     <q-page-container>
-      <q-page class="q-mx-auto" style="max-width: 2000px;">
-        <slot/>
+      <q-page class="q-mx-auto" style="max-width: 2000px">
+        <slot />
       </q-page>
     </q-page-container>
   </div>
 </template>
 
 <script>
-import { ref } from "vue"
+import { ref } from "vue";
 
 export default {
   setup() {
@@ -88,10 +92,23 @@ export default {
       },
       {
         icon: "mdi-account",
-        label: "Users",
+        label: "Usuarios",
         href: "users",
+        separator: false,
+      },
+      {
+        label: "His. trabajo",
+        icon: "mdi-folder-multiple",
+        href: "his.trabajo",
+      },
+      { label: "trabajos", icon: "mdi-account-hard-hat", href: "trabajos" },
+      {
+        label: "Soporte",
+        icon: "mdi-cog-outline",
+        href: "soporte",
         separator: true,
       },
+
       {
         icon: "settings",
         label: "Settings",
@@ -113,4 +130,3 @@ export default {
   },
 };
 </script>
-

@@ -289,7 +289,6 @@ function openDialog(item) {
 const confirmarPREV = async (index) => {
   try {
     const jobId = item.value[index].id;
-    console.log("Enviando solicitud para confirmar prevención, Job ID:", jobId);
 
     const response = await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { 
       confirmacion_prevencionista: 1 

@@ -106,6 +106,7 @@ export default {
       emit("handleCloseCreateOperator");
     };
 
+    console.log(params.slug)
     const handleCreateOperator = () => {
       api
         .post(

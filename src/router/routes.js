@@ -46,8 +46,16 @@ const routes = [
   },
   {
     path: "/users/",
-    component: () => import("src/components/Users.vue"),
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("src/pages/Users.vue"),
+        name: "users",
+      },
+    ],
   },
+ ,
 ];
 
 export default routes;

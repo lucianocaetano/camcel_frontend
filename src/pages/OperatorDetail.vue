@@ -4,9 +4,9 @@
       <div class="flex justify-between q-mb-md">
         <q-btn color="primary" flat @click="handleOutClick">salir</q-btn>
         <div class="flex justify-between">
-          <q-btn color="primary q-mr-md" @click="handleOpenUpdateOperator"
-            >Editar</q-btn
-          >
+          <q-btn color="primary q-mr-md" @click="handleOpenUpdateOperator">
+            Editar
+          </q-btn>
           <q-btn color="negative" @click="handleDeleteClick">Borrar</q-btn>
         </div>
       </div>
@@ -18,9 +18,9 @@
         <q-markup-table>
           <thead>
             <tr>
-              <th class="text-left">Cedula</th>
+              <th class="text-left">C.I.</th>
               <th class="text-right">Nombre</th>
-              <th class="text-right">Autorizado</th>
+              <th class="text-right">Autorización</th>
               <th class="text-right">Cargo</th>
             </tr>
           </thead>
@@ -34,92 +34,33 @@
           </tbody>
         </q-markup-table>
       </q-card>
-      <MenuEditOperator
-        v-if="updateOperator"
-        @handleCloseUpdateOperator="handleCloseUpdateOperator"
-        :operator="operator"
-        :show="updateOperator"
+      <table-documents
+        v-if="documents"
+        :documents="documents"
+        :isOperator="true"
       />
 
-      <view-document
-        v-if="showDocumentMenu"
-        :show="showDocumentMenu"
-        :document="doc"
-        :operator="true"
-        @handleCloseDocumentMenu="handleCloseDocumentMenu"
-      />
-
-      <div style="width: 100%; height: 100vh" class="q-mt-xl">
-        <div class="flex justify-between q-mb-md items-center">
-          <h4 class="text-h4 q-my-none">Documentos de la empresa:</h4>
-          <q-btn
-            label="Añadir Documento"
-            class="q-mt-md q-mr-sm"
-            type="button"
-            color="primary"
-          />
-        </div>
-        <q-markup-table flat bordered>
-          <thead class="bg-teal text-white">
-            <tr>
-              <th class="text-left">Title</th>
-              <th class="text-left">Expira</th>
-              <th class="text-left">Autorizacion</th>
-              <th class="text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
-            <tr
-              v-for="(document, index) in documents"
-              :key="index"
-              :class="`${document.is_valid ? '' : 'bg-grey-4'} cursor-pointer`"
-              @click="() => handleOpenDocumentMenu(document.id)"
-            >
-              <td class="text-left">
-                {{ document.title }}
-              </td>
-              <td class="text-left">
-                {{ document.expire }}
-              </td>
-              <td class="text-left">
-                <p :class="document.is_valid ? 'text-green' : 'text-red'">
-                  {{ document.is_valid ? "Autorizado" : "No Autorizado" }}
-                </p>
-              </td>
-              <td class="text-center">
-                <q-btn
-                  v-if="document.is_valid"
-                  label="Deprecar"
-                  type="button"
-                  color="negative"
-                  class="q-ml-sm"
-                />
-                <q-btn
-                  v-else
-                  label="Autorizar"
-                  type="button"
-                  color="primary"
-                  class="q-ml-sm"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </q-markup-table>
-      </div>
     </div>
+    <MenuEditOperator
+      v-if="updateOperator"
+      @handleCloseUpdateOperator="handleCloseUpdateOperator"
+      :operator="operator"
+      :show="updateOperator"
+    />
 
-    <div class="text-center" v-if="isLoading">loading...</div>
+    <div class="text-center" v-if="isLoading">Cargando...</div>
   </div>
 </template>
+
 <script>
 import { api } from "src/boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
-import ViewDocument from "../components/ViewDocument.vue";
 import MenuEditOperator from "src/components/MenuEditOperator.vue";
+import TableDocuments from "../components/TableDocuments.vue";
 
 export default {
-  components: { ViewDocument, MenuEditOperator },
+  components: { MenuEditOperator, TableDocuments },
   setup() {
     const { params } = useRoute();
     const router = useRouter();
@@ -171,16 +112,6 @@ export default {
     };
 
     fetchOperator();
-    const doc = ref(null);
-    const showDocumentMenu = ref(false);
-
-    const handleOpenDocumentMenu = (pk) => {
-      doc.value = pk;
-      showDocumentMenu.value = true;
-    };
-    const handleCloseDocumentMenu = () => {
-      showDocumentMenu.value = false;
-    };
 
     const updateOperator = ref(false);
     const handleOpenUpdateOperator = () => {
@@ -195,10 +126,6 @@ export default {
       updateOperator,
       handleCloseUpdateOperator,
       handleOpenUpdateOperator,
-      doc,
-      handleOpenDocumentMenu,
-      handleCloseDocumentMenu,
-      showDocumentMenu,
       operator,
       documents,
       isLoading,

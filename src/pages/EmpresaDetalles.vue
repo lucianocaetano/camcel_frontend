@@ -1,11 +1,5 @@
 <template>
   <div>
-    <view-document
-      v-if="showDocumentMenu"
-      :show="showDocumentMenu"
-      :document="doc"
-      @handleCloseDocumentMenu="handleCloseDocumentMenu"
-    />
     <div v-if="!isLoading" class="q-mx-auto" style="max-width: 1000px">
       <q-img
         :src="api_base_backend + empresa.image"
@@ -85,7 +79,7 @@
           v-if="createOperator"
           :show="createOperator"
           @handleCloseCreateOperator="handleCloseCreateOperator"
-        />
+        />1973-08-07 00:00:00
         <div class="flex justify-between items-center q-my-md">
           <h4 class="text-h4 q-my-none">Operarios:</h4>
           <q-btn
@@ -99,14 +93,14 @@
         <q-markup-table flat bordered>
           <thead class="bg-dark text-white">
             <tr>
-              <th class="text-left">Cedula</th>
+              <th class="text-left">C.I.</th>
               <th class="text-left">Nombre</th>
-              <th class="text-left">Autorizado</th>
+              <th class="text-left">Autorización</th>
               <th class="text-left">Cargo</th>
               <th class="text-center">Acciones</th>
             </tr>
           </thead>
-          <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
+          <tbody :class="$q.dark.isActive ? 'bg-grey-91973-08-07 00:00:00' : 'bg-grey-3'">
             <tr
               v-for="(operator, index) in operators"
               :key="index"
@@ -136,76 +130,10 @@
           </tbody>
         </q-markup-table>
       </div>
-
-      <div style="width: 100%; height: 100vh" class="q-mt-xl">
-        <div class="flex justify-between q-mb-md items-center">
-          <h4 class="text-h4 q-my-none">Documentos de la empresa:</h4>
-          <q-btn
-            label="Añadir Documento"
-            class="q-mt-md q-mr-sm"
-            type="button"
-            color="primary"
-          />
-        </div>
-        <q-markup-table flat bordered>
-          <thead class="bg-teal text-white">
-            <tr>
-              <th class="text-left">Title</th>
-              <th class="text-left">Expira</th>
-              <th class="text-left">Autorizacion</th>
-              <th class="text-left">Empresa</th>
-              <th class="text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
-            <tr
-              v-for="(document, index) in documents"
-              :key="index"
-              :class="`${document.is_valid ? '' : 'bg-grey-4'} cursor-pointer`"
-              @click="() => handleOpenDocumentMenu(document.id)"
-            >
-              <td class="text-left">
-                {{ document.title }}
-              </td>
-              <td class="text-left">
-                {{ document.expire }}
-              </td>
-              <td class="text-left">
-                <p :class="document.is_valid ? 'text-green' : 'text-red'">
-                  {{ document.is_valid ? "Autorizado" : "No Autorizado" }}
-                </p>
-              </td>
-              <td class="text-left">
-                {{ document.enterprise }}
-              </td>
-              <td class="text-center">
-                <q-btn type="button" class="text-h6 text-secondary">
-                  <span class="mdi mdi-pencil"></span>
-                </q-btn>
-
-                <q-btn
-                  v-if="document.is_valid"
-                  type="button"
-                  class="q-ml-md text-h6 text-negative"
-                >
-                  <span class="mdi mdi-thumb-down"></span>
-                </q-btn>
-
-                <q-btn
-                  v-else
-                  type="button"
-                  class="q-ml-md text-h6 text-primary"
-                >
-                  <span class="mdi mdi-thumb-up"></span>
-                </q-btn>
-              </td>
-            </tr>
-          </tbody>
-        </q-markup-table>
-      </div>
+      <table-documents :documents="documents" />
     </div>
 
-    <div v-if="isLoading" class="text-center">loading...</div>
+    <div v-if="isLoading" class="text-center">Cargando...</div>
     <div v-if="empresaNoExiste" class="row justify-center">
       <h4 class="text-h4 column">
         no existe esta empresa
@@ -223,13 +151,13 @@ import { api } from "src/boot/axios";
 import { ref } from "vue";
 import { api_base_backend } from "../helpers.js";
 import { useEnterpriseStore } from "src/store/enterprise.store.js";
-import ViewDocument from "../components/ViewDocument.vue";
+import TableDocuments from "../components/TableDocuments.vue";
 
 export default {
   components: {
     MenuEditEmpresa,
-    ViewDocument,
     MenuCreateOperator,
+    TableDocuments,
   },
   setup() {
     const route = useRoute();
@@ -314,17 +242,6 @@ export default {
       });
     };
 
-    const doc = ref(null);
-    const showDocumentMenu = ref(false);
-
-    const handleOpenDocumentMenu = (pk) => {
-      doc.value = pk;
-      showDocumentMenu.value = true;
-    };
-    const handleCloseDocumentMenu = () => {
-      showDocumentMenu.value = false;
-    };
-
     const createOperator = ref(false);
     const handleOpenCreateOperator = () => {
       createOperator.value = true;
@@ -337,10 +254,6 @@ export default {
       createOperator,
       handleCloseCreateOperator,
       handleOpenCreateOperator,
-      doc,
-      showDocumentMenu,
-      handleOpenDocumentMenu,
-      handleCloseDocumentMenu,
       isLoading,
       empresa,
       empresaNoExiste,

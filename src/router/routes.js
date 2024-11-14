@@ -46,7 +46,7 @@ const routes = [
   },
   {
     path: "/users/",
-    component: () => import("layouts/MainLayout.vue"),
+    component: () => import("src/components/Users.vue"),
   },
 ];
 

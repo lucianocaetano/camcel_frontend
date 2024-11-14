@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-header
       elevated
-      style="padding: 0 20px; background: #025B6D;"
+      style="padding: 0 20px; background: #025b6d"
       class="row justify-between"
     >
       <div>
@@ -13,8 +13,8 @@
       </div>
 
       <div class="row">
-        <Notificaciones2/>
-        <chat/>
+        <Notificaciones2 />
+        <chat />
         <q-btn flat icon="person">
           <q-menu>
             <q-list style="min-width: 100px">
@@ -33,7 +33,7 @@
 
               <q-separator />
               <q-item clickable @click="handleLogout" v-close-popup>
-                <q-item-section >Cerrar Sesion</q-item-section>
+                <q-item-section>Cerrar Sesion</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -78,37 +78,39 @@
   </div>
 </template>
 
-<script setup>
-const search = ref('');
-
-const menuList = [
-  {
-    icon: "business_center",
-    label: "Empresas",
-    href: "enterprises",
-    separator: false,
-  },
-  {
-    icon: "mdi-account",
-    label: "Users",
-    href: "users",
-    separator: true,
-  },
-  {
-    icon: "settings",
-    label: "Settings",
-    separator: false,
-  },
-  {
-    icon: "logout",
-    iconColor: "primary",
-    label: "Logout",
-    separator: false,
-  },
-];
+<script>
+import { ref } from "vue"
 
 export default {
   setup() {
+    const search = ref("");
+
+    const menuList = [
+      {
+        icon: "business_center",
+        label: "Empresas",
+        href: "enterprises",
+        separator: false,
+      },
+      {
+        icon: "mdi-account",
+        label: "Users",
+        href: "users",
+        separator: true,
+      },
+      {
+        icon: "settings",
+        label: "Settings",
+        separator: false,
+      },
+      {
+        icon: "logout",
+        iconColor: "primary",
+        label: "Logout",
+        separator: false,
+      },
+    ];
+
     return {
       drawer: ref(false),
       search,

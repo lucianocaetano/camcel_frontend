@@ -1,17 +1,12 @@
 <template>
   <div class="q-pa-md">
-    <q-header
-      elevated
-      style="padding: 0 20px; background: #025b6d"
-      class="row justify-between"
-    >
+    <q-header elevated style="padding: 0 20px;" class="row justify-between bg-teal-10">
       <div>
         <q-toolbar class="row items-center">
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
           <q-toolbar-title>Camcel</q-toolbar-title>
         </q-toolbar>
       </div>
-
       <div class="row">
         <Notificaciones2 />
         <chat />
@@ -27,10 +22,9 @@
                 <q-item-section>Empresa</q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup to="/Configuracion">
                 <q-item-section>Configuracion</q-item-section>
               </q-item>
-
               <q-separator />
               <q-item clickable @click="handleLogout" v-close-popup>
                 <q-item-section>Cerrar Sesion</q-item-section>
@@ -40,7 +34,7 @@
         </q-btn>
       </div>
     </q-header>
-
+    
     <q-drawer
       v-model="drawer"
       show-if-above
@@ -71,8 +65,8 @@
       </q-scroll-area>
     </q-drawer>
     <q-page-container>
-      <q-page class="q-mx-auto" style="max-width: 2000px">
-        <slot />
+      <q-page class="q-mx-auto" style="max-width: 2000px;">
+        <slot/>
       </q-page>
     </q-page-container>
   </div>
@@ -119,3 +113,4 @@ export default {
   },
 };
 </script>
+

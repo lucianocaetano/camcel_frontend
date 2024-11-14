@@ -111,7 +111,19 @@ export default {
         });
     };
 
+<<<<<<< HEAD
     fetchOperator();
+=======
+    api
+      .get(`enterprises/${params.enterprise}/operators/${params.pk}`)
+      .then((response) => {
+        operator.value = response.data.operator;
+        isLoading.value = false;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+>>>>>>> Deploytment
 
     const updateOperator = ref(false);
     const handleOpenUpdateOperator = () => {

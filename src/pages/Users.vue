@@ -37,7 +37,7 @@
       <q-btn
         class="bg-primary text-white q-mr-md"
         @click="handleCreateUserMenuOpen"
-        >Create</q-btn
+        >Crear</q-btn
       >
 
       <q-btn-dropdown

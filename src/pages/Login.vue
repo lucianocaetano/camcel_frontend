@@ -1,6 +1,6 @@
 <template>
   <div class="login row justify-center">
-    <div class="uno col-4 row justify-center items-center row">
+    <div class="uno col-12 col-md-4 row justify-center items-center row">
       <q-card class="tarjeta col-10">
         <q-card-section class="formulario row justify-center items-center">
           <q-form @submit="onSubmit" @reset="onReset" class="col-10">
@@ -35,34 +35,35 @@
               </q-input>
             </div>
 
-            <q-toggle
-              v-model="licencia"
-              label="Acepto los términos de licencia"
-              class="q-mb-md"
-            />
-
             <div class="flex flex-center">
               <q-btn
-                label="Enviar"
+                label="Entrar"
                 type="submit"
                 color="primary"
                 class="boton_enviar"
                 @click.prevent="enviar"
               />
             </div>
+            <br>
+            <div class="flex flex-center">
+              <q-btn
+                label="Registrarse"
+                type="submit"
+                color="primary"
+                class="boton_enviar"
+              />
+            </div>
           </q-form>
         </q-card-section>
       </q-card>
     </div>
-    <div class="imagen col-8"></div>
+    <div class="imagen col-0 d-none d-md-block col-md-8"></div> <!-- Ocultar en pantallas pequeñas y col-md-8 en pantallas grandes -->
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-
 import { useUserStore } from "../store/user.store";
-
 import { useRouter } from "vue-router";
 import { api } from "src/boot/axios";
 
@@ -75,9 +76,7 @@ const licencia = ref(false);
 const text = ref("");
 
 const email = ref("");
-
 const password = ref("");
-
 const isPwd = ref(true);
 
 const enviar = async () => {
@@ -88,9 +87,8 @@ const enviar = async () => {
     })
     .then(function (response) {
       userStore.setToken(response.data.access_token);
-      userStore.setUser(response.data.user);
+      userStore.setUser (response.data.user);
       userStore.setAuth(true);
-
       router.push("/");
     })
     .catch(function (error) {
@@ -127,7 +125,6 @@ const enviar = async () => {
   box-shadow: 3px 3px 5px rgba(151, 175, 209, 0.5);
   border-radius: 5%;
 }
-
 .imagen {
   background-image: url("/imagenes/Fondo1.jpeg");
   height: 100%;
@@ -136,4 +133,3 @@ const enviar = async () => {
   width: 40%;
 }
 </style>
-

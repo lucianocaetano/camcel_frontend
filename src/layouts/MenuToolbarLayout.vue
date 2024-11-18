@@ -1,10 +1,19 @@
 <template>
   <div class="q-pa-md">
-    <q-header elevated style="padding: 0 20px;" class="row justify-between bg-teal-10">
+    <q-header elevated style="padding: 0 20px;  " class="row justify-between"
+    :style="{ backgroundColor: '#085d71' }">
       <div>
         <q-toolbar class="row items-center">
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
-          <q-toolbar-title>Camcel</q-toolbar-title>
+          <q-toolbar-title  class="q-mx-auto"
+          style="display: flex; justify-content: center">
+            <img
+          src="src/assets/LogoCamcel.jpg"
+          alt="Logo Camcel"
+          width="287"
+          height="65"
+        />
+          </q-toolbar-title>
         </q-toolbar>
       </div>
      

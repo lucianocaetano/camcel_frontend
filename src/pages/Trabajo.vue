@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="ola q-mx-auto">
-      <q-list bordered>
+      <q-list bordered style="background-color: #ffffff;">
         <q-item bordered>
           <q-item-section class="col-2">
             <q-item-label header>Nombre Empresa</q-item-label>

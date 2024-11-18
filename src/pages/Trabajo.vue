@@ -40,30 +40,19 @@
           <q-input class="col-6" v-model="newActividad.trabajo" label="Trabajo a realizar" />
         </div>
         <div class="row">
-          <q-input class="col-6" v-model="newActividad.fechaInicio" label="Fecha Inicio" type="date" />
-          <q-input class="col-6" v-model="newActividad.fechaFin" label="Fecha Fin" type="date" />
-        </div>
-        <div class="row">
-        
-          <q-input filled v-model="timeE" label="Hora de entrada" mask="time" :rules="['time']">
+          <div>
+    <q-btn label="Agregar Fecha y Horario" @click="addFechaHora" color="primary" />
+    <div v-for="(item, index) in fechaHoraList" :key="index" class="fecha-hora-input">
+      <div class="row">
+        <q-input class="col-6" v-model="item.fechaInicio" label="Fecha Inicio" type="date" />
+        <q-input class="col-6" v-model="item.fechaFin" label="Fecha Fin" type="date" />
+      </div>
+      <div class="row">
+        <q-input filled v-model="item.timeE" label="Hora de entrada" mask="time" :rules="['time']">
           <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer">
               <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-time v-model="timeE">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-time>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-          
-        <q-input filled v-model="timeS" label="Hora de salida" mask="time" :rules="['time']">
-          <template v-slot:append>
-            <q-icon name="access_time" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-time v-model="timeS">
+                <q-time v-model="item.timeE">
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" color="primary" flat />
                   </div>
@@ -73,7 +62,29 @@
           </template>
         </q-input>
 
+        <q-input filled v-model="item.timeS" label="Hora de salida" mask="time" :rules="['time']">
+          <template v-slot:append>
+            <q-icon name="access_time" class="cursor-pointer">
+              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                <q-time v-model="item.timeS">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-time>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+    </div>
+  </div>
+       
+     
+  
+
         </div>
+       
+       
         
       </div>
         <div class="col-12" v-if="step === 1">
@@ -240,11 +251,22 @@ import { api } from "src/boot/axios";
 import { useUserStore } from 'src/store/user.store';
 import { date } from 'quasar';
 
-
 //constantes
 
 
 
+// Definición de la lista de fechas y horarios
+const fechaHoraList = ref([]);
+
+// Función para agregar una nueva fecha y horario
+const addFechaHora = () => {
+  fechaHoraList.value.push({
+    fechaInicio: '',
+    fechaFin: '',
+    timeE: '',
+    timeS: ''
+  });
+};
 
 const userStore = useUserStore()
 const token = userStore.token;
@@ -450,4 +472,7 @@ onMounted(() => {
     width: 900px;
   }
 }
+.fecha-hora-input {
+    margin-bottom: 20px;
+  }
 </style>

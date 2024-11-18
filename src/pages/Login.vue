@@ -49,7 +49,7 @@
               <q-btn
                 label="Registrarse"
                 type="submit"
-                color="primary"
+                color="yellow-7"
                 class="boton_enviar"
               />
             </div>

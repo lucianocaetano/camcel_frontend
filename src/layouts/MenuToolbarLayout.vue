@@ -50,27 +50,27 @@
       bordered
       :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
     >
-    <q-scroll-area
-        style="
-          height: calc(100% - 150px);
-        "
-      >
-        <q-list padding>
-          <q-item clickable v-ripple v-for="(boton , index) in menuList"
-          :key="index"  @click="pagina(boton.pagina)">
-            <q-item-section  avatar>
-              <q-icon  :name="boton.icono" />
-            </q-item-section>
-
-            <q-item-section > {{ boton.nombre }} </q-item-section>
-          </q-item>
+      <q-scroll-area class="fit">
+        <q-list>
+          <template v-for="(menuItem, index) in menuList" :key="index">
+            <q-item
+              clickable
+              v-ripple
+              class="text-black"
+              :to="{ name: menuItem.href }"
+            >
+              <q-item-section avatar>
+                <q-icon :name="menuItem.icon" />
+              </q-item-section>
+              <q-item-section>
+                {{ menuItem.label }}
+              </q-item-section>
+            </q-item>
+            <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+          </template>
         </q-list>
-          
       </q-scroll-area>
-
-      
     </q-drawer>
-
     <q-page-container>
       <q-page class="q-mx-auto" style="max-width: 2000px;">
         <slot/>

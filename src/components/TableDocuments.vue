@@ -110,11 +110,12 @@ export default {
 
     const handleOpenAddDocumentMenu = () => {
       showAddDocumentMenu.value = true;
-      emit("refetch");
     };
 
     const handleCloseAddDocumentMenu = () => {
       showAddDocumentMenu.value = false;
+      console.log(showAddDocumentMenu.value)
+      emit("refetch");
     };
 
     return {

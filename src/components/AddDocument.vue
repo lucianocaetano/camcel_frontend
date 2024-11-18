@@ -19,7 +19,7 @@
               >
               <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
             </div>
-            <q-btn label="Crear" class="q-mt-md" type="submit" color="primary" />
+            <q-btn label="Subir" class="q-mt-md" type="submit" color="primary" />
         </q-form>
       </q-card-section>
 
@@ -29,7 +29,7 @@
           label="Cerrar"
           color="primary"
           v-close-popup
-          @click="handleCloseCreateEnterprise"
+          @click="handleCloseAddDocumentMenu"
           />
       </q-card-actions>
     </q-card>
@@ -65,8 +65,8 @@ export default {
 
     const error_create = ref(null);
 
-    const handleCloseCreateEnterprise = () => {
-      emit("handleCloseCreateEnterprise");
+    const handleCloseAddDocumentMenu = () => {
+      emit("handleCloseAddDocumentMenu");
     };
 
     const { params } = useRoute()
@@ -102,7 +102,7 @@ export default {
       data,
       handleAddDocument,
       show,
-      handleCloseCreateEnterprise,
+      handleCloseAddDocumentMenu,
       error_create,
     };
   },

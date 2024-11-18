@@ -91,8 +91,16 @@
 
 <script>
 import { ref } from "vue";
+import Chat from 'src/components/Chat.vue'
+import notificaciones from 'src/components/Notificaciones.vue' 
+import Notificaciones2 from 'src/components/Notificaciones2.vue';
 
 export default {
+  components: {
+    Chat,
+    notificaciones,
+    Notificaciones2
+  },
   setup() {
     const search = ref("");
 
@@ -114,23 +122,11 @@ export default {
         icon: "mdi-folder-multiple",
         href: "his.trabajo",
       },
-      { label: "trabajos", icon: "mdi-account-hard-hat", href: "trabajos" },
+     { label: "Trabajos", icon: "mdi-account-hard-hat", href: "trabajos" },
       {
         label: "Soporte",
         icon: "mdi-cog-outline",
         href: "soporte",
-        separator: true,
-      },
-
-      {
-        icon: "settings",
-        label: "Settings",
-        separator: false,
-      },
-      {
-        icon: "logout",
-        iconColor: "primary",
-        label: "Logout",
         separator: false,
       },
     ];

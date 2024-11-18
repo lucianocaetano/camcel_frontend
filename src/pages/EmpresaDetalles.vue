@@ -79,7 +79,7 @@
           v-if="createOperator"
           :show="createOperator"
           @handleCloseCreateOperator="handleCloseCreateOperator"
-        />1973-08-07 00:00:00
+        />
         <div class="flex justify-between items-center q-my-md">
           <h4 class="text-h4 q-my-none">Operarios:</h4>
           <q-btn
@@ -164,6 +164,9 @@ export default {
     const router = useRouter();
 
     const enterpriseStore = useEnterpriseStore();
+
+    console.log(enterpriseStore)
+
     const { params } = route;
 
     const isLoading = ref(true);

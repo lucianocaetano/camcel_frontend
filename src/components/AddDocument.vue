@@ -5,7 +5,7 @@
         <div class="text-h6">Añadir Documento</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-form @submit.prevent="handleCreateEnterprise">
+        <q-form @submit.prevent="handleAddDocument">
           <q-input
             name="title"
             required
@@ -70,6 +70,7 @@ export default {
     };
 
     const { params } = useRoute()
+    
     const handleAddDocument = () => {
       api
         .post(

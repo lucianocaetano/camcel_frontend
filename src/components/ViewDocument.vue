@@ -33,11 +33,12 @@
           style="flex-grow: 1; border: none; height: 100%; height: 100%"
         />
       </q-card-actions>
-      <q-card-actions class="flex justify-between" style="height: auto">
+      <q-card-actions class="flex justify-end" style="height: auto">
         <q-btn
           flat
           label="Cerrar"
-          class="text-right"
+          class="text-left"
+          color="primary"
           v-close-popup
           @click="handleCloseMenu"
         />

@@ -66,7 +66,7 @@
     />
 
     <add-document
-      v-if="showDocumentMenu"
+      v-if="showAddDocumentMenu"
       :show="showAddDocumentMenu"
       :handleCloseAddDocumentMenu="handleCloseAddDocumentMenu"
     />

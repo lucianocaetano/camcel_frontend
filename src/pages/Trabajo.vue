@@ -238,10 +238,12 @@ import { ref, computed, onMounted,  onUnmounted, getCurrentInstance } from 'vue'
 import { useEnterpriseStore } from "src/store/enterprise.store"
 import { api } from "src/boot/axios";
 import { useUserStore } from 'src/store/user.store';
-
+import { date } from 'quasar';
 
 
 //constantes
+
+
 
 
 const userStore = useUserStore()
@@ -289,6 +291,7 @@ function openDialog(item) {
 const confirmarPREV = async (index) => {
   try {
     const jobId = item.value[index].id;
+    console.log("Enviando solicitud para confirmar prevención, Job ID:", jobId);
 
     const response = await api.patch(`admin/jobs/${jobId}/updateConfirmation`, { 
       confirmacion_prevencionista: 1 
@@ -352,91 +355,60 @@ function stepmenos() {
     step.value--
   }
 }
-
-// Computed para filtrar las item
-//  const itemFiltradas = computed(() => {
-//    const hoy = new Date().toISOString().split('T')[0];
-//    return item.value.filter(actividad => actividad.fechaInicio >= hoy);
-//  });
-
-
-// Función para obtener item desde la API
-
-
-async function obteneritem() {
-    try {
-        const response = await api.get("admin/jobs");
-        // Procesa la respuesta y actualiza el estado
-        const trabajos = response.data.jobs; // Asegúrate de que estás accediendo a la propiedad correcta
-        const jobDates = response.data.job_dates; // Esto contiene todas las fechas
-
-        // Estructura para almacenar item
-        const itemTemp = [];
-
-        // Iterar sobre los trabajos
-        trabajos.forEach(job => {
-            // Filtrar las fechas que corresponden a este trabajo
-            const fechas = jobDates.filter(date => date.job_id === job.id) || []; // Asegúrate de que jobDates es un array
-
-            // Asegúrate de que 'fechas' es un array
-            if (!Array.isArray(fechas)) {
-                console.error("La variable 'fechas' no es un array:", fechas);
-                return; // Manejar el error adecuadamente
-            }
-            console.log(job)
-
-            // Formatear las fechas
-            const fechasFormateadas = fechas.map(date => new Date(date.fecha.replace(/"/g, '')))
-                                             .sort((a, b) => a - b) // Ordenar las fechas
-                                             .map(date => date.toISOString().split('T')[0]); // Convertir a formato YYYY-MM-DD
-
-            // Agregar a la lista de item
-            itemTemp.push({
-                id: job.id,
-                nombre: job.enterprise,
-                trabajo: job.trabajo || "Trabajo desconocido",
-                fechas: fechasFormateadas,
-                confirmacionPREV: job.confirmacion_prevencionista,
-                confirmacionEmpresa: job.confirmacion_empresa,
-            });
-        });
-
-        // Ordenar las item por id de trabajo
-        item.value = itemTemp.sort((a, b) => a.id - b.id);
-
-    } catch (error) {
-        console.error("Error al obtener item:", error);
-    }
+// Función para filtrar los trabajos con fechas a partir de hoy
+function filterJobsFromToday(jobs) {
+  const today = date.formatDate(new Date(), 'YYYY-MM-DD'); // Fecha actual en formato 'YYYY-MM-DD'
+  return jobs.filter((job) => {
+    // Obtener la lista de fechas del trabajo
+    const fechas = job.fechas || [];
+    // Filtrar solo los trabajos cuyas fechas incluyen hoy o una fecha futura
+    return fechas.some(fecha => fecha >= today);
+  });
 }
 
-//const listenForJobUpdates = () => {
-  //  const echo = getCurrentInstance().appContext.config.globalProperties.$echo;
+async function obteneritem() {
+  try {
+    const response = await api.get("admin/jobs");
+    const trabajos = response.data.jobs;
+    const jobDates = response.data.job_dates;
 
-    //if (!echo) {
-      //  console.error("Echo no está definido");
-        //return; // Salir si Echo no está disponible
-    //}
+    const itemTemp = [];
 
-//    const channel = echo.channel('jobs');
+    // Iterar sobre los trabajos
+    trabajos.forEach(job => {
+      const fechas = jobDates.filter(date => date.job_id === job.id) || [];
 
-    // Escuchar el evento JobUpdated
-//    channel.listen('JobUpdated', (e) => {
-  //      console.log("Evento JobUpdated recibido:", e); // Agrega este log
-    //    const updatedJob = e.job;
-//        const index = jobs.value.findIndex(job => job.id === updatedJob.id);
-//        
-  //      if (index !== -1) {
-            // Actualiza el trabajo existente
-    //        jobs.value[index] = updatedJob; // Vue 3 detecta cambios automáticamente en refs
-    //    } else {
-            // Si es un nuevo trabajo, añade
-   //         jobs.value.push(updatedJob);
-   //     }
-  //  });
+      if (!Array.isArray(fechas)) {
+        console.error("La variable 'fechas' no es un array:", fechas);
+        return;
+      }
 
-   
-//};
+      // Formatear y ordenar las fechas
+      const fechasFormateadas = fechas.map(date => new Date(date.fecha.replace(/"/g, '')))
+                                       .sort((a, b) => a - b)
+                                       .map(date => date.toISOString().split('T')[0]);
 
+      // Agregar a la lista de item solo si hay fechas futuras o de hoy
+      itemTemp.push({
+        id: job.id,
+        nombre: job.enterprise,
+        trabajo: job.trabajo || "Trabajo desconocido",
+        fechas: fechasFormateadas,
+        confirmacionPREV: job.confirmacion_prevencionista,
+        confirmacionEmpresa: job.confirmacion_empresa,
+      });
+    });
+
+    // Aplicar el filtro de trabajos desde hoy en adelante
+    const itemFiltrado = filterJobsFromToday(itemTemp);
+
+    // Ordenar los trabajos filtrados
+    item.value = itemFiltrado.sort((a, b) => a.id - b.id);
+
+  } catch (error) {
+    console.error("Error al obtener item:", error);
+  }
+}
 
 
 

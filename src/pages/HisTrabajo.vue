@@ -1,6 +1,26 @@
 <template>
   <q-page>
     <div class="ola q-mx-auto">
+       <!-- Añadir el menú desplegable para filtrar -->
+       <q-btn-dropdown  color="#a5a5a5" :label="selectedOption" text-color="#000000">
+          <q-list>
+            <q-item clickable v-close-popup @click="onItemClick('Todos')">
+              <q-item-section>
+                <q-item-label>Todos</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onItemClick('Aceptados')">
+              <q-item-section>
+                <q-item-label>Aceptados</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onItemClick('Rechazados')">
+              <q-item-section>
+                <q-item-label>Rechazados</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       <q-list bordered>
         <q-item bordered>
           <q-item-section class="col-2">
@@ -167,8 +187,26 @@ const step = ref(0);
 const dropdowns = ref({}); // Objeto para manejar el estado de cada desplegable
 const props = defineProps(['items']);
 const pollingInterval = ref(null);
+const selectedOption = ref('Todos'); // Opción por defecto
+const itemTemp = ref([]); // Almacena todos los trabajos
+const onItemClick = (option) => {
+    selectedOption.value = option;
+    filterItems(); // Llama a la función para filtrar los trabajos
+};
+// Función para filtrar los trabajos
+const filterItems = () => {
+  const hoy = new Date().toISOString().split('T')[0]; // Fecha actual
+  item.value = itemTemp.value.filter(job => {
+    const fechas = job.fechas;
+    return fechas.length > 0 && fechas[fechas.length - 1] < hoy; // Solo trabajos pasados
+  });
 
-
+  if (selectedOption.value === 'Aceptados') {
+    item.value = item.value.filter(job => job.confirmacionPREV === 1 && job.confirmacionEmpresa === 1);
+  } else if (selectedOption.value === 'Rechazados') {
+    item.value = item.value.filter(job => job.confirmacionPREV === 0 || job.confirmacionEmpresa === 0);
+  }
+};
 const newActividad = ref({
   
   nombre: '',
@@ -288,32 +326,26 @@ function stepmenos() {
 async function obteneritem() {
     try {
         const response = await api.get("admin/jobs");
-        // Procesa la respuesta y actualiza el estado
-        const trabajos = response.data.jobs; // Asegúrate de que estás accediendo a la propiedad correcta
-        const jobDates = response.data.job_dates; // Esto contiene todas las fechas
+        const trabajos = response.data.jobs;
+        const jobDates = response.data.job_dates;
 
-        // Estructura para almacenar item
-        const itemTemp = [];
+        // Asegúrate de que itemTemp.value sea un array
+        itemTemp.value = []; // Inicializa itemTemp como un array vacío
 
-        // Iterar sobre los trabajos
         trabajos.forEach(job => {
-            // Filtrar las fechas que corresponden a este trabajo
-            const fechas = jobDates.filter(date => date.job_id === job.id) || []; // Asegúrate de que jobDates es un array
-
-            // Asegúrate de que 'fechas' es un array
+            const fechas = jobDates.filter(date => date.job_id === job.id) || [];
             if (!Array.isArray(fechas)) {
                 console.error("La variable 'fechas' no es un array:", fechas);
-                return; // Manejar el error adecuadamente
+                return;
             }
-            console.log(job)
 
-            // Formatear las fechas
             const fechasFormateadas = fechas.map(date => new Date(date.fecha.replace(/"/g, '')))
-                                             .sort((a, b) => a - b) // Ordenar las fechas
-                                             .map(date => date.toISOString().split('T')[0]); // Convertir a formato YYYY-MM-DD
+                                             .sort((a, b) => a - b)
+                                             .map(date => date.toISOString().split('T')[0]);
 
-            // Agregar a la lista de item
-            itemTemp.push({
+            // Usa itemTemp.value para agregar elementos
+            
+            itemTemp.value.push({
                 id: job.id,
                 nombre: job.enterprise,
                 trabajo: job.trabajo || "Trabajo desconocido",
@@ -323,8 +355,9 @@ async function obteneritem() {
             });
         });
 
-        // Ordenar las item por id de trabajo
-        item.value = itemTemp.sort((a, b) => a.id - b.id);
+        // Ordenar y almacenar los trabajos
+        itemTemp.value.sort((a, b) => a.id - b.id);
+        filterItems(); // Filtra los trabajos según la opción seleccionada
 
     } catch (error) {
         console.error("Error al obtener item:", error);

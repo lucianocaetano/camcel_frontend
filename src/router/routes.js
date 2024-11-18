@@ -37,7 +37,7 @@ const routes = [
     ],
   },
   {
-    path: "/users/",
+    path: "/usuarios/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {

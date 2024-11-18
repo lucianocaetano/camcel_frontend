@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+<<<<<<< HEAD
     <q-header
       elevated
       :style="{padding: '0 20px', backgroundColor: '#085d71'}"

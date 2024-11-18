@@ -41,7 +41,7 @@
       >
 
       <q-btn-dropdown
-        color="#a5a5a5"
+        color="#000000"
         label="Filtrar"
         text-color="#000000"
       >

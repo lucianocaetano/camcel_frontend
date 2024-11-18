@@ -2,7 +2,7 @@
   <q-page>
     <div class="ola q-mx-auto">
        <!-- Añadir el menú desplegable para filtrar -->
-       <q-btn-dropdown  color="#a5a5a5" :label="selectedOption" text-color="#000000">
+       <q-btn-dropdown  color="#ffffff" :label="selectedOption" text-color="#000000" style=" margin-bottom: 2%;">
           <q-list>
             <q-item clickable v-close-popup @click="onItemClick('Todos')">
               <q-item-section>
@@ -21,7 +21,7 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-      <q-list bordered>
+      <q-list bordered style="background-color: #ffffff;">
         <q-item bordered>
           <q-item-section class="col-2">
             <q-item-label header>Nombre Empresa</q-item-label>

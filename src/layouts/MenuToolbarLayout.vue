@@ -12,7 +12,7 @@
         </q-toolbar>
       </div>
 
-      <q-toolbar-title
+      <div
         class="q-mx-auto"
         style="display: flex; justify-content: center"
       >
@@ -22,7 +22,7 @@
           width="287"
           height="65"
         />
-      </q-toolbar-title>
+      </div>
 
      
       <div class="row">

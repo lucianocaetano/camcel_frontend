@@ -1,1 +1,1 @@
-export const api_base_backend = "http://192.168.124.188:8000/"
+export const api_base_backend = "http://127.0.0.1:8000"

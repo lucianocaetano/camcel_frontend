@@ -30,99 +30,110 @@
         </q-item>
       </q-list>
       
-  <q-dialog v-model="dialogVisible">
-    <q-card>
+ 
+   <template>
+  <q-dialog v-model="dialogVisible" class="col-10">
+    <q-card style="height: 80%; width: 80%;">
+       <q-markup-table style="height: 90%; overflow-y: scroll">
       <q-card-section>
+       
+        <!-- Paso 1: Datos de la actividad -->
         <div v-if="step === 0">
-      
-        <div class="col-6">
-          <q-input class="col-6" v-model="newActividad.nombre" label="Nombre Empresa" />
-          <q-input class="col-6" v-model="newActividad.trabajo" label="Trabajo a realizar" />
-        </div>
-        <div class="row">
-          <div>
-    <q-btn label="Agregar Fecha y Horario" @click="addFechaHora" color="primary" />
-    <div v-for="(item, index) in fechaHoraList" :key="index" class="fecha-hora-input">
-      <div class="row">
-        <q-input class="col-6" v-model="item.fechaInicio" label="Fecha Inicio" type="date" />
-        <q-input class="col-6" v-model="item.fechaFin" label="Fecha Fin" type="date" />
-      </div>
-      <div class="row">
-        <q-input filled v-model="item.timeE" label="Hora de entrada" mask="time" :rules="['time']">
-          <template v-slot:append>
-            <q-icon name="access_time" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-time v-model="item.timeE">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-time>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-
-        <q-input filled v-model="item.timeS" label="Hora de salida" mask="time" :rules="['time']">
-          <template v-slot:append>
-            <q-icon name="access_time" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-time v-model="item.timeS">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-time>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-      </div>
-    </div>
-  </div>
-       
-     
-  
-
-        </div>
-       
-       
-        
-      </div>
-        <div class="col-12" v-if="step === 1">
-          <div>
+          <div class="col-6">
             
-            <q-checkbox v-model="newActividad.confirmacionEmpresa" label="¿Esta empresa, confirmó el trabajo?" style="display: block;"/>
+              <q-select
+                v-model="selectedEnterpriseId" 
+                :options="enterpriseOptions"
+                option-label="nombre" 
+                option-value="enterprise_id"
+                label="Seleccionar Empresa"
+                emit-value
+                map-options
+              />
+            
+            <q-input class="col-6" v-model="newActividad.trabajo" label="Trabajo a realizar" />
           </div>
-        <div class="col-6" style="display: inline-block; width: 50%;">
-          <q-checkbox v-model="newActividad.solicitarCI" label="Solicitar CI" style="display: block;"/>
-          
-          <q-checkbox v-model="newActividad.solicitarBPS" label="Solicitar BPS" style="display: block;"/>
-          
-          <q-checkbox v-model="newActividad.solicitarBSE" label="Solicitar BSE" style="display: block;"/>  
-        
-          <q-checkbox v-model="newActividad.solicitarInduccionSeguridad" label="Solicitar Inducción de Seguridad" style="display: block;"/>
-        
-          <q-checkbox v-model="newActividad.permisoTrabajoEnCaliente" label="Permiso de trabajo en caliente" style="display: block;"/> 
-        
-        
+          <div class="row">
+            <div>
+              <q-btn label="Agregar Fecha y Horario" @click="addFechaHora" color="primary" />
+              <div v-for="(item, index) in fechaHoraList" :key="index" class="fecha-hora-input">
+                <div class="row">
+                  <q-input class="col-6" v-model="item.fechaInicio" label="Fecha" type="date" />
+                  <q-btn
+                    class="col-2 q-mt-md"
+                    style="margin-left: auto;"
+                    @click="removeFechaHora(index)"
+                  >
+                    Eliminar
+                  </q-btn>
+                </div>
+                <div class="row">
+                  <q-input filled v-model="item.timeE" label="Hora de entrada" mask="time" />
+                  <q-input filled v-model="item.timeS" label="Hora de salida" mask="time" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-6" style="display: inline-block; width: 50%;">
-          <q-checkbox v-model="newActividad.permisoTrabajoEnAltura" label="Permiso de trabajo en altura" style="display: block;" /> 
-          
-          <q-checkbox v-model="newActividad.permisoTrabajoEnEspacioConfinado" label="Permiso de trabajo en espacio confinado" style="display: block;"/>
-          
-          <q-checkbox v-model="newActividad.permisoTrabajoOtros" label="Otros permisos de trabajo" style="display: block;"/> 
-        
-          <q-checkbox v-model="newActividad.solicitarEntregaEPP" label="Entrega EPP" style="display: block;"/>
-          </div></div>
+
+        <!-- Paso 2: Selección de operadores -->
+        <div v-if="step === 1">
+          <q-btn label="Agregar Operador" @click="addOperador" color="primary" />
+          <div v-for="(operador, index) in operadoresList" :key="index" class="operador-input">
+            <div class="row q-col-gutter-md">
+              <q-input class="col-6" v-model="operador.nombre" label="Nombre del Operador" />
+              <q-input class="col-6" v-model="operador.rol" label="Rol del Operador" />
+              <q-btn
+                class="col-2 q-mt-md"
+                style="margin-left: auto;"
+                @click="removeOperador(index)"
+                color="negative"
+              >
+                Eliminar
+              </q-btn>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 3: Documentos -->
+        <div v-if="step === 2">
+          <q-btn label="Agregar Documento" @click="addDocumento" color="primary" />
+          <div v-for="(doc, index) in documentosList" :key="index" class="documento-input">
+            <div class="row q-col-gutter-md">
+              <q-input class="col-6" v-model="doc.titulo" label="Tipo del Documento" />
+              <q-checkbox
+                class="col-6"
+                v-model="doc.cargarDetalles"
+                label="¿Cargar detalles del documento?"
+              />
+              <div v-if="doc.cargarDetalles">
+                <q-input class="col-6" v-model="doc.url"  type="file" />
+                <q-input class="col-6" v-model="doc.dataTang" label="Fecha de Expiración" type="date" />
+                <q-checkbox class="col-6" v-model="doc.valido" label="¿Documento válido?" />
+              </div>
+              <q-btn
+                class="col-2 q-mt-md"
+                style="margin-left: auto; max-height: 30px;"
+                @click="removeDocumento(index)"
+                color="negative"
+              >
+                Eliminar
+              </q-btn>
+            </div>
+          </div>
+        </div>
       </q-card-section>
-    <q-card-actions>
-      <q-btn label="Cancelar" @click="dialogVisible = false" />
-      <q-btn v-if="step === 0" @click="stepmas" icon="mdi-chevron-right"/>
-      <q-btn v-if="step === 1" @click="stepmenos"icon="mdi-chevron-left"></q-btn>
-      <q-btn v-if="step === 1" label="Registrar" @click="registrarActividad" color="primary" />
-    </q-card-actions>
-  </q-card>
-</q-dialog>
+    </q-markup-table>
+      <q-card-actions>
+        <q-btn label="Cancelar" @click="dialogVisible = false" />
+        <q-btn v-if="step > 0" @click="stepmenos" icon="mdi-chevron-left" />
+        <q-btn v-if="step < 2" @click="stepmas" icon="mdi-chevron-right" />
+        <q-btn v-if="step === 2" label="Registrar" @click="registrarActividad" color="primary" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+</template>
+    
 
     <q-item v-for="(item, index) in item" :key="index" :class="{'bg-grey-4': index % 2 === 0}">
           <q-item-section class="col-2">
@@ -250,23 +261,9 @@ import { useEnterpriseStore } from "src/store/enterprise.store"
 import { api } from "src/boot/axios";
 import { useUserStore } from 'src/store/user.store';
 import { date } from 'quasar';
+import { useQuasar } from 'quasar';
 
 //constantes
-
-
-
-// Definición de la lista de fechas y horarios
-const fechaHoraList = ref([]);
-
-// Función para agregar una nueva fecha y horario
-const addFechaHora = () => {
-  fechaHoraList.value.push({
-    fechaInicio: '',
-    fechaFin: '',
-    timeE: '',
-    timeS: ''
-  });
-};
 
 const userStore = useUserStore()
 const token = userStore.token;
@@ -282,17 +279,202 @@ const props = defineProps(['items']);
 const pollingInterval = ref(null);
 
 
+
+// Estado reactivo
+const selectedEnterpriseId = ref(null);
+const enterpriseOptions = ref([]);
+
+// Función para obtener las empresas
+const fetchEnterprises = async () => {
+  try {
+    const response = await api.get("enterprises");
+   
+   
+    // Mapea los datos para obtener solo los campos necesarios
+    enterpriseOptions.value = response.data.map(empresa => ({
+      enterprise_id: empresa.id, // Usamos RUT como el identificador
+      nombre: empresa.nombre, // Usamos 'nombre' para el nombre de la empresa
+      
+    }));
+  } catch (error) {
+    console.error('Error al obtener los datos de la empresa:', error);
+  }
+};
+
+
+// Ejecutar la función cuando el componente se monte
+onMounted(fetchEnterprises);
+// Datos de la actividad
 const newActividad = ref({
-  
   nombre: '',
   trabajo: '',
-  fechaInicio: '',
-  fechaFin: '',
-  horaEntrada: '',
-  horaSalida: '',
-  confirmacionEmpresa: false,
-  confirmacionPREV: null,
 });
+
+// Fechas y horarios
+const fechaHoraList = ref([]);
+
+// Lista de documentos
+const documentosList = ref([]);
+
+// Lista de operadores
+const operadoresList = ref([]);
+
+// Quasar para notificaciones
+const $q = useQuasar();
+
+// Función para agregar una fecha y horario
+const addFechaHora = () => {
+  fechaHoraList.value.push({
+    fechaInicio: '',
+    timeE: '',
+    timeS: '',
+  });
+};
+
+// Función para eliminar una fecha y horario
+const removeFechaHora = (index) => {
+  fechaHoraList.value.splice(index, 1);
+};
+
+// Función para agregar un operador
+const addOperador = () => {
+  operadoresList.value.push({
+    nombre: '',
+    rol: '',
+  });
+};
+
+// Función para eliminar un operador
+const removeOperador = (index) => {
+  operadoresList.value.splice(index, 1);
+};
+
+// Función para agregar un documento
+const addDocumento = () => {
+  documentosList.value.push({
+    titulo: '',
+    cargarDetalles: false, // Inicialmente, no se solicitan detalles
+    url: '',
+    dataTang: '',
+    valido: false,
+  });
+};
+
+// Función para eliminar un documento
+const removeDocumento = (index) => {
+  documentosList.value.splice(index, 1);
+};
+
+// Validaciones para datos requeridos
+const validarDatos = () => {
+  // Validar datos de actividad
+  if (!newActividad.value.trabajo) {
+    $q.notify({ type: 'negative', message: 'Por favor completa todos los campos de la actividad.' });
+    return false;
+  }
+
+  // Validar fechas y horarios
+  for (const fecha of fechaHoraList.value) {
+    if (!fecha.fechaInicio || !fecha.timeE || !fecha.timeS) {
+      $q.notify({ type: 'negative', message: 'Por favor completa todos los campos de fecha y horario.' });
+      return false;
+    }
+  }
+
+  // Validar operadores
+  for (const operador of operadoresList.value) {
+    if (!operador.nombre || !operador.rol) {
+      $q.notify({ type: 'negative', message: 'Por favor completa todos los datos de los operadores.' });
+      return false;
+    }
+  }
+
+  // Validar documentos
+  for (const doc of documentosList.value) {
+    if (!doc.titulo) {
+      $q.notify({ type: 'negative', message: 'Por favor completa el título de todos los documentos.' });
+      return false;
+    }
+    if (doc.cargarDetalles && (!doc.url || !doc.dataTang)) {
+      $q.notify({ type: 'negative', message: 'Por favor completa los detalles de los documentos marcados.' });
+      return false;
+    }
+  }
+
+  return true;
+};
+
+// Registrar actividad
+// Función para registrar la actividad
+const registrarActividad = async () => {
+  if (!validarDatos()) {
+    return;
+  }
+  console.log("fechaHoraList antes de formatear:", fechaHoraList.value);
+ 
+  fechaHoraList.value = fechaHoraList.value.map(item => {
+  if (item.fechaInicio && item.timeE && item.timeS) {
+    const fechaFormateada = new Date(item.fechaInicio);
+
+    // Verificar si la fecha es válida
+    if (isNaN(fechaFormateada.getTime())) {
+      console.error("Fecha inválida:", item.fechaInicio);
+      return null;  // Si la fecha es inválida, eliminar el item
+    }
+
+    return {
+      fechaInicio: fechaFormateada.toISOString().split("T")[0],  // Formatear a "yyyy-mm-dd"
+      timeE: item.timeE,
+      timeS: item.timeS
+    };
+  } else {
+    console.error("Faltan datos en:", item);
+    return null;  // Eliminar item con datos faltantes
+  }
+}).filter(item => item !== null);  // Filtrar los valores nulos
+
+console.log("fechaHoraList después de la validación:", fechaHoraList.value);
+
+  
+  const payload = {
+    
+    trabajo: newActividad.value.trabajo,
+    fechas: fechaHoraList.value,
+    operadores: operadoresList.value,
+    documentos: documentosList.value,
+    enterprise_id: selectedEnterpriseId.value, // Agregar el enterprise_id aquí
+  };
+
+  try {
+    await $q.loading.show();
+    await api.post('admin/jobs', payload); // Enviar el payload con el enterprise_id
+    $q.notify({ type: 'positive', message: 'Actividad registrada exitosamente.' });
+    dialogVisible.value = false;
+
+    // Limpiar datos después del registro
+    newActividad.value = { nombre: '', trabajo: '' };
+    fechaHoraList.value = [];
+    operadoresList.value = [];
+    documentosList.value = [];
+  } catch (error) {
+    
+  console.error('Error:', error.response ? error.response.data : error.message);
+  $q.notify({ type: 'negative', message: 'Hubo un error al registrar la actividad.' });
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+// Funciones para avanzar y retroceder en los pasos
+const stepmas = () => {
+  step.value++;
+};
+
+const stepmenos = () => {
+  step.value--;
+};
+
+
 const toggleDropdown = (index) => {
   dropdowns.value[index] = !isDropdownOpen(index); // Cambia el estado del desplegable
 };
@@ -300,6 +482,7 @@ const toggleDropdown = (index) => {
 const isDropdownOpen = (index) => {
   return !!dropdowns.value[index]; // Verifica si el desplegable está abierto
 };
+// Función para eliminar una fecha y horario
 
 const trabajo=ref()
 const showDialog = ref(false);
@@ -367,16 +550,7 @@ function expandDocument(documento) {
   // Abre el documento en una nueva pestaña o como modal, según prefieras
   window.open(documento.url, '_blank');
 }
-function stepmas() {
-  if (step.value < 2) {
-    step.value++
-  }
-}
-function stepmenos() {
-  if (step.value > 0) {
-    step.value--
-  }
-}
+
 // Función para filtrar los trabajos con fechas a partir de hoy
 function filterJobsFromToday(jobs) {
   const today = date.formatDate(new Date(), 'YYYY-MM-DD'); // Fecha actual en formato 'YYYY-MM-DD'

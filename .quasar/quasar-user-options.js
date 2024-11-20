@@ -13,9 +13,9 @@
 
 
 
-import {Notify} from 'quasar'
+import {Notify,Loading} from 'quasar'
 
 
 
-export default { config: {"transition":{"page":"fade"}},plugins: {Notify} }
+export default { config: {"transition":{"page":"fade"}},plugins: {Notify,Loading} }
 

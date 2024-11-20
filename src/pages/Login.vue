@@ -39,7 +39,7 @@
               <q-btn
                 label="Entrar"
                 type="submit"
-                color="primary"
+                color="light-blue-14"
                 class="boton_enviar"
                 @click.prevent="enviar"
               />
@@ -49,7 +49,7 @@
               <q-btn
                 label="Registrarse"
                 type="submit"
-                color="yellow-7"
+                color="primary"
                 class="boton_enviar"
               />
             </div>

@@ -16,7 +16,9 @@
           </q-toolbar-title>
         </q-toolbar>
       </div>
-     
+     <div>
+      
+     </div>
       <div class="row">
         <Notificaciones2/>
         <chat/>

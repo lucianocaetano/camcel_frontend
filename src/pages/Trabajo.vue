@@ -267,16 +267,11 @@ import { useQuasar } from 'quasar';
 
 const userStore = useUserStore()
 const token = userStore.token;
-const enterpriseStore = useEnterpriseStore()
 const item = ref([]);
-const horas = ref([]);
 const dialogVisible = ref(false);
-const timeE = ref("");
-const timeS = ref("");
 const step = ref(0);
 const dropdowns = ref({}); // Objeto para manejar el estado de cada desplegable
 const props = defineProps(['items']);
-const pollingInterval = ref(null);
 
 
 
@@ -410,18 +405,14 @@ const registrarActividad = async () => {
   if (!validarDatos()) {
     return;
   }
-  console.log("fechaHoraList antes de formatear:", fechaHoraList.value);
- 
   fechaHoraList.value = fechaHoraList.value.map(item => {
   if (item.fechaInicio && item.timeE && item.timeS) {
     const fechaFormateada = new Date(item.fechaInicio);
-
     // Verificar si la fecha es válida
     if (isNaN(fechaFormateada.getTime())) {
       console.error("Fecha inválida:", item.fechaInicio);
       return null;  // Si la fecha es inválida, eliminar el item
     }
-
     return {
       fechaInicio: fechaFormateada.toISOString().split("T")[0],  // Formatear a "yyyy-mm-dd"
       timeE: item.timeE,
@@ -432,32 +423,25 @@ const registrarActividad = async () => {
     return null;  // Eliminar item con datos faltantes
   }
 }).filter(item => item !== null);  // Filtrar los valores nulos
-
-console.log("fechaHoraList después de la validación:", fechaHoraList.value);
-
-  
   const payload = {
-    
     trabajo: newActividad.value.trabajo,
     fechas: fechaHoraList.value,
     operadores: operadoresList.value,
     documentos: documentosList.value,
-    enterprise_id: selectedEnterpriseId.value, // Agregar el enterprise_id aquí
+    enterprise_id: selectedEnterpriseId.value,
+    confirmacionPREV: null // Agregar el enterprise_id aquí
   };
-
   try {
     await $q.loading.show();
     await api.post('admin/jobs', payload); // Enviar el payload con el enterprise_id
     $q.notify({ type: 'positive', message: 'Actividad registrada exitosamente.' });
     dialogVisible.value = false;
-
     // Limpiar datos después del registro
     newActividad.value = { nombre: '', trabajo: '' };
     fechaHoraList.value = [];
     operadoresList.value = [];
     documentosList.value = [];
-  } catch (error) {
-    
+  } catch (error) { 
   console.error('Error:', error.response ? error.response.data : error.message);
   $q.notify({ type: 'negative', message: 'Hubo un error al registrar la actividad.' });
   } finally {

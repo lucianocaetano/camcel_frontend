@@ -24,7 +24,7 @@
 </style>
 <script setup>
 import { provide, ref } from 'vue'
-import ChatCompleto from 'src/components/ChatCompleto.vue '
+import ChatCompleto from 'components/ChatCompleto.vue'
 const text = ref('')
 const dialog = ref(false)
 const maximizedToggle = ref(true)

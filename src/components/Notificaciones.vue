@@ -24,7 +24,7 @@
 </style>
 <script setup>
 import { provide, ref } from 'vue'
-import ChatCompleto from 'src/components/ChatCompleto.vue '
+
 import Notificaciones2 from './Notificaciones2.vue';
 const text = ref('')
 const dialog = ref(false)

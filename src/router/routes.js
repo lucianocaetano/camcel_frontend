@@ -73,25 +73,10 @@ const routes = [
     path: "/cuenta/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      {
-        path: "",
-        component: () => import("src/pages/Documentos.vue"),
-
-        name: "cuenta",
-      },
+      
     ],
   },
-  {
-    path: "/calendario/",
-    component: () => import("layouts/MainLayout.vue"),
-    children: [
-      {
-        path: "",
-        component: () => import("src/pages/Calendario.vue"),
-        name: "calendario",
-      },
-    ],
-  },
+ 
   
   {
     path: "/Configuracion",

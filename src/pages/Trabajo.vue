@@ -107,8 +107,12 @@
                 label="¿Cargar detalles del documento?"
               />
               <div v-if="doc.cargarDetalles">
-                <q-input class="col-6" v-model="doc.url"  type="file" />
-                <q-input class="col-6" v-model="doc.dataTang" label="Fecha de Expiración" type="date" />
+                <input 
+                class="col-6" 
+                type="file" 
+                @change="handleFileUpload($event, index)" 
+              />
+                          <q-input class="col-6" v-model="doc.dataTang" label="Fecha de Expiración" type="date" />
                 <q-checkbox class="col-6" v-model="doc.valido" label="¿Documento válido?" />
               </div>
               <q-btn
@@ -273,7 +277,12 @@ const step = ref(0);
 const dropdowns = ref({}); // Objeto para manejar el estado de cada desplegable
 const props = defineProps(['items']);
 
-
+const handleFileUpload = (event, index) => {
+  const file = event.target.files[0]; // Obtén el archivo seleccionado
+  if (file) {
+    documentosList.value[index].file = file; // Guarda el archivo en la lista de documentos
+  }
+};
 
 // Estado reactivo
 const selectedEnterpriseId = ref(null);
@@ -401,51 +410,43 @@ const validarDatos = () => {
 
 // Registrar actividad
 // Función para registrar la actividad
+
 const registrarActividad = async () => {
-  if (!validarDatos()) {
-    return;
-  }
-  fechaHoraList.value = fechaHoraList.value.map(item => {
-  if (item.fechaInicio && item.timeE && item.timeS) {
-    const fechaFormateada = new Date(item.fechaInicio);
-    // Verificar si la fecha es válida
-    if (isNaN(fechaFormateada.getTime())) {
-      console.error("Fecha inválida:", item.fechaInicio);
-      return null;  // Si la fecha es inválida, eliminar el item
+  const formData = new FormData();
+  formData.append('enterprise_id',selectedEnterpriseId.value,)
+  
+  // Agregar datos de la actividad
+  formData.append('nombre', newActividad.value.nombre);
+  formData.append('trabajo', newActividad.value.trabajo);
+
+  // Agregar fechas y horarios
+  fechaHoraList.value.forEach((item, index) => {
+    formData.append(`fechas[${index}][fechaInicio]`, item.fechaInicio);
+    formData.append(`fechas[${index}][timeE]`, item.timeE);
+    formData.append(`fechas[${index}][timeS]`, item.timeS);
+  });
+
+  // Agregar documentos
+  documentosList.value.forEach((doc, index) => {
+    formData.append('document_type', doc.titulo )
+    formData.append(`documentos[${index}][titulo]`, doc.titulo);
+    if (doc.file) {
+      formData.append(`documentos[${index}][file]`, doc.file); // Archivo como file
     }
-    return {
-      fechaInicio: fechaFormateada.toISOString().split("T")[0],  // Formatear a "yyyy-mm-dd"
-      timeE: item.timeE,
-      timeS: item.timeS
-    };
-  } else {
-    console.error("Faltan datos en:", item);
-    return null;  // Eliminar item con datos faltantes
-  }
-}).filter(item => item !== null);  // Filtrar los valores nulos
-  const payload = {
-    trabajo: newActividad.value.trabajo,
-    fechas: fechaHoraList.value,
-    operadores: operadoresList.value,
-    documentos: documentosList.value,
-    enterprise_id: selectedEnterpriseId.value,
-    confirmacionPREV: null // Agregar el enterprise_id aquí
-  };
+    formData.append(`documentos[${index}][dataTang]`, doc.dataTang);
+    formData.append(`documentos[${index}][valido]`, doc.valido);
+  });
+
   try {
-    await $q.loading.show();
-    await api.post('admin/jobs', payload); // Enviar el payload con el enterprise_id
-    $q.notify({ type: 'positive', message: 'Actividad registrada exitosamente.' });
-    dialogVisible.value = false;
-    // Limpiar datos después del registro
-    newActividad.value = { nombre: '', trabajo: '' };
-    fechaHoraList.value = [];
-    operadoresList.value = [];
-    documentosList.value = [];
-  } catch (error) { 
-  console.error('Error:', error.response ? error.response.data : error.message);
-  $q.notify({ type: 'negative', message: 'Hubo un error al registrar la actividad.' });
-  } finally {
-    $q.loading.hide();
+    const response = await api.post('admin/jobs', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('Registro exitoso:', response.data);
+  } catch (error) {
+    console.error('Error al registrar la actividad:', error);
+    $q.notify({ color: 'negative', message: 'Error al registrar la actividad.' });
   }
 };
 

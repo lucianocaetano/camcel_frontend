@@ -7,28 +7,28 @@
     >
       <q-card-section class="flex justify-between">
         <div>
-          <div class="text-h6 q-mb-sm">{{ doc.title }}</div>
-          <p class="q-mb-none">Expira: {{ doc.expire }}</p>
-          <p v-if="doc.enterprise">Empresa: {{ doc.enterprise }}</p>
+          <div class="text-h6 q-mb-sm">{{ document.title }}</div>
+          <p class="q-mb-none">Expira: {{ document.expire }}</p>
+          <p v-if="document.enterprise">Dueño: {{ document.owner }}</p>
         </div>
         <div>
-          <p :class="doc.is_valid ? 'text-green' : 'text-red'">
-            {{ doc.is_valid ? "Autorizado" : "No Autorizado" }}
+          <p :class="document.is_valid ? 'text-green' : 'text-red'">
+            {{ document.is_valid ? "Autorizado" : "No Autorizado" }}
           </p>
 
           <a
-            :href="api_base_backend + doc.url_document"
+            :href="api_base_backend + '/' + document.url_document"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Ir al documento
+            Ir al documentumento
           </a>
         </div>
       </q-card-section>
 
       <q-card-actions class="q-pa-none" style="flex-grow: 1; overflow: hidden; padding: 0 10px;">
         <iframe
-          :src="api_base_backend + doc.url_document"
+          :src="api_base_backend + '/' + document.url_document"
           class="w-full"
           style="flex-grow: 1; border: none; height: 100%; height: 100%"
         />
@@ -52,10 +52,8 @@
 </template>
 
 <script>
-import { toRef, ref } from "vue";
-import { useRoute } from "vue-router";
-import { api } from "src/boot/axios";
-import { api_base_backend } from "../helpers.js";
+import { toRef } from "vue";
+import { api_base_backend } from "../../helpers.js";
 
 export default {
   props: {
@@ -64,7 +62,7 @@ export default {
       required: true,
     },
     document: {
-      type: Number,
+      type: Object,
       required: true,
     },
     operator: {
@@ -73,34 +71,12 @@ export default {
   },
   setup(props, { emit }) {
     const show = toRef(props, "show");
-    const isOperatorMenu = toRef(props, "operator");
-    const doc_id = toRef(props, "document");
 
-    const isLoading = ref(true);
-
-    const doc = ref(null);
-
-    const { params } = useRoute();
-
-    const operatorRoute = isOperatorMenu.value
-      ? `enterprises/${params.enterprise}/operators/${params.pk}/documents/${doc_id.value}`
-      : `enterprises/${params.slug}/documents/${doc_id.value}`;
-
-    api.get(operatorRoute).then((response) => {
-      if (response.status === 200) {
-        doc.value = response.data.document;
-      }
-      isLoading.value = false;
-    });
-
-    const handleCloseMenu = () => {
-      emit("handleCloseDocumentMenu");
-    };
+    const handleCloseMenu = () => emit("handleClose");
 
     return {
-      doc,
       handleCloseMenu,
-      isLoading,
+      documentument: props.document,
       show,
       api_base_backend,
     };

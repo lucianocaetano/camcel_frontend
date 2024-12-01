@@ -18,15 +18,15 @@
             :key="index"
             class="q-mt-sm"
           >
-            <span  class="q-pa-xs bg-negative text-white">
+            <span class="q-pa-xs bg-negative text-white">
               {{ error }}
             </span>
           </div>
           <q-input
-            name="nombre"
+            name="name"
             required
             label="nombre"
-            v-model="dataCreateEnterprise.nombre"
+            v-model="dataCreateEnterprise.name"
           />
           <div
             v-for="(error, index) in error_create?.nombre"
@@ -84,19 +84,18 @@
           label="Cerrar"
           color="primary"
           v-close-popup
-          @click="handleCloseCreateEnterprise"
+          @click="handleClose"
         />
       </q-card-actions>
-
     </q-card>
   </q-dialog>
 </template>
 
 <script>
-
 import { reactive, toRef, ref } from "vue";
 import { api } from "src/boot/axios";
 import { useEnterpriseStore } from "src/store/enterprise.store";
+import { useCreateEnterprise } from "src/hooks/api/enterprises.hooks";
 
 export default {
   props: {
@@ -106,24 +105,23 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const enterpriseStore = useEnterpriseStore();
-
+    const show = toRef(props, "show");
     const isLoadingUser = ref(true);
     const users = ref(null);
 
-    api.get("users", {
-      params: {
-        rol: "users_enterprise"
-      }
-    }).then((response) => {
-      isLoadingUser.value = false;
-      users.value = response.data.users;
-    });
-
-    const show = toRef(props, "show");
+    api
+      .get("users", {
+        params: {
+          role: "users_not_enterprise",
+        },
+      })
+      .then((response) => {
+        isLoadingUser.value = false;
+        users.value = response.data.users;
+      });
 
     const dataCreateEnterprise = reactive({
-      nombre: "",
+      name: "",
       RUT: "",
       is_valid: false,
       image: null,
@@ -132,41 +130,28 @@ export default {
 
     const error_create = ref(null);
 
-    const handleCloseCreateEnterprise = () => {
+    const handleClose = () => {
       emit("handleCloseCreateEnterprise");
     };
 
-    const handleCreateEnterprise = () => {
-      api
-        .post(
-          "enterprises",
-          {
-            ...dataCreateEnterprise,
-            user_id: dataCreateEnterprise.user_id?.id,
-          },
-          {
-            headers: dataCreateEnterprise.image
-              ? { "Content-Type": "multipart/form-data" }
-              : { "Content-Type": "application/json" },
-          }
-        )
-        .then((response) => {
-          enterpriseStore.addEnterprise(response.data.enterprise);
-          handleCloseCreateEnterprise();
-        })
-        .catch((err) => {
-          if (err.response.status === 422) {
-            const messages = err.response.data.errors;
-            error_create.value = messages;
-          }
-        });
+    const handleCreateEnterprise = async () => {
+      const {isError, error} = await useCreateEnterprise({
+        ...dataCreateEnterprise,
+        user_id: dataCreateEnterprise.user_id?.id,
+      });
+
+      if (!isError.value) {
+        handleClose();
+      } else {
+        error_create.value = error.value;
+      }
     };
 
     return {
       dataCreateEnterprise,
       handleCreateEnterprise,
       show,
-      handleCloseCreateEnterprise,
+      handleClose,
       isLoadingUser,
       users,
       error_create,

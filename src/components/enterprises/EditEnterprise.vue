@@ -5,37 +5,30 @@
         <div class="text-h6">Menu Edit Empresa</div>
       </q-card-section>
 
-      <q-card-section class="q-pt-none" v-if="empresa">
+      <q-card-section class="q-pt-none" v-if="enterprise">
         <q-form @submit.prevent="handleUpdateEnterprise">
-          <q-input
-            name="rut"
-            required
-            label="rut"
-            v-model="empresa.RUT"
-          />
-
           <q-input
             name="nombre"
             required
             label="nombre"
-            v-model="empresa.nombre"
+            v-model="enterprise.name"
           />
           <div
-            v-for="(error, index) in error_create?.nombre"
+            v-for="(error, index) in error_edit?.nombre"
             :key="index"
             class="q-mt-sm"
           >
             <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
           </div>
 
-          <q-file color="teal" filled label="image" v-model="empresa.image">
+          <q-file color="teal" filled label="image" v-model="image">
             <template v-slot:prepend>
               <q-icon name="cloud_upload" />
             </template>
           </q-file>
 
           <div
-            v-for="(error, index) in error_create?.image"
+            v-for="(error, index) in error_edit?.image"
             :key="index"
             class="q-mt-sm"
           >
@@ -45,11 +38,11 @@
           <p v-if="isLoadingUser">loading...</p>
           <q-select
             v-else
-            v-model="empresa.user"
+            v-model="enterprise.user"
             required
             option-label="email"
             :options="users"
-            label="Standard"
+            label="Usuarios"
           />
 
           <q-btn
@@ -71,6 +64,7 @@
 <script>
 import { ref, toRef } from "vue";
 import { api } from "src/boot/axios";
+import { useUpdateEnterprise } from "src/hooks/api/enterprises.hooks";
 
 export default {
   props: {
@@ -78,14 +72,15 @@ export default {
       type: Boolean,
       required: true,
     },
-    empresa: {
+    enterprise: {
       required: true,
     },
   },
   setup(props, { emit }) {
     const show = toRef(props, "show");
-    const empresa = toRef(props, "empresa");
-    const error_create = ref(null);
+    const enterprise = toRef(props, "enterprise");
+    const error_edit = ref(null);
+    const image = ref(null);
 
     const isLoadingUser = ref(true);
     const users = ref(null);
@@ -101,46 +96,34 @@ export default {
         users.value = response.data.users;
       });
 
-    const handleClose = () => {
-      emit("handleCloseMenuEmpresa");
-    };
+    const handleClose = () => emit("handleCloseMenuEditEnterprise");
 
-    const handleUpdateEnterprise = () => {
-      api
-        .put(
-          "enterprises/" + empresa.value.slug,
-          {
-            ...empresa.value,
-            user_id: empresa.value.user?.id,
-            image: undefined,
-          },
-          {
-            headers: empresa.image
-              ? { "Content-Type": "multipart/form-data" }
-              : { "Content-Type": "application/json" },
-          }
-        )
-        .then((response) => {
-          if (response.status === 200) {
-            handleClose();
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err?.response?.status === 422) {
-            const messages = err.response.data.errors;
-            error_create.value = messages;
-          }
-        });
+    const handleUpdateEnterprise = async () => {
+      const {
+        isError,
+        error,
+        enterprise: data,
+      } = await useUpdateEnterprise(enterprise.value.slug, {
+        ...enterprise.value,
+        image: image.value,
+      })
+
+      if (!isError.value) {
+        enterprise.value.image = data.value.image
+        handleClose()
+      } else {
+        error_edit.value = error.value;
+      }
     };
 
     return {
       show,
       handleClose,
-      empresa,
-      error_create,
+      enterprise,
+      error_edit,
       handleUpdateEnterprise,
       isLoadingUser,
+      image,
       users,
     };
   },

@@ -57,7 +57,9 @@ import { api } from "src/boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import MenuEditOperator from "src/components/MenuEditOperator.vue";
-import TableDocuments from "../components/TableDocuments.vue";
+import TableDocuments from "../components/documents/TableDocuments.vue";
+import { useOperator, useDeleteOperator } from "src/hooks/api/operators.hooks";
+import { useDocumentsOperators as useDocuments } from "src/hooks/api/documents.hooks";
 
 export default {
   components: { MenuEditOperator, TableDocuments },
@@ -65,61 +67,23 @@ export default {
     const { params } = useRoute();
     const router = useRouter();
 
-    const operator = ref(null);
-    const documents = ref(null);
-    const isLoading = ref(true);
+    const {operator, isLoading, refetch} = useOperator(params.enterprise, params.pk)
+    const { documents, isLoading: isLoadingDocuments, refetch: refetchDocuments } = useDocuments(params.enterprise, params.pk);
+    
+    const handleOutClick = () => router.push("/enterprise/" + params.enterprise);
 
-    const handleOutClick = () => {
-      router.push("/empresas/" + params.enterprise);
+    const handleDeleteClick = async () => {
+      await useDeleteOperator(params.enterprise, params.pk)
+      refetch();
     };
-
-    const handleDeleteClick = () => {
-      api
-        .delete(`enterprises/${params.enterprise}/operators/${params.pk}`)
-        .then((response) => {
-          if (response.status == 200) {
-            handleOutClick();
-          }
-        });
-    };
-
-    const fetchOperator = () => {
-      api
-        .get(`enterprises/${params.enterprise}/operators/${params.pk}`)
-        .then((response) => {
-          operator.value = {
-            ...response.data.operator,
-            is_valid: response.data.operator.is_valid
-              ? "Autorizado"
-              : "No Autorizado",
-          };
-          if (response.status === 200) {
-            api
-              .get(
-                `enterprises/${params.enterprise}/operators/${params.pk}/documents`
-              )
-              .then((response) => {
-                documents.value = response.data.documents;
-              });
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-        .finally(() => {
-          isLoading.value = false;
-        });
-    };
-
-    fetchOperator();
 
     const updateOperator = ref(false);
-    const handleOpenUpdateOperator = () => {
-      updateOperator.value = true;
-    };
+    
+    const handleOpenUpdateOperator = () => updateOperator.value = true;
+
     const handleCloseUpdateOperator = () => {
-      updateOperator.value = false;
-      fetchOperator();
+      updateOperator.value = false 
+      refetch() 
     };
 
     return {
@@ -128,7 +92,8 @@ export default {
       handleOpenUpdateOperator,
       operator,
       documents,
-      isLoading,
+      isLoading: isLoading && isLoadingDocuments,
+      refetchDocuments,
       handleOutClick,
       handleDeleteClick,
     };

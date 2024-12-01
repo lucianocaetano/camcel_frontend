@@ -2,8 +2,8 @@
   <ValidDeleteUserMenu
     v-if="validDeleteMenu"
     :show="validDeleteMenu"
-    @handleDeleteUserMenuClose="handleDeleteUserMenuClose"
-    @handleDeleteUserMenuAccept="handleDeleteUserMenuAccept"
+    @handleDeleteMenuClose="handleDeleteUserMenuClose"
+    @handleDeleteMenuAccept="handleDeleteUserMenuAccept"
   />
 
   <EditUser
@@ -110,7 +110,7 @@
 <script>
 import { api } from "src/boot/axios";
 import { ref } from "vue";
-import ValidDeleteUserMenu from "src/components/ValidDeleteUserMenu.vue";
+import ValidDeleteUserMenu from "src/components/ValidDeleteMenu.vue";
 import EditUser from "src/components/EditUser.vue";
 import CreateUser from "src/components/CreateUser.vue";
 

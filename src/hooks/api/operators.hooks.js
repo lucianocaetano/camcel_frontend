@@ -29,6 +29,7 @@ export const useOperator = (enterprise, pk) => {
   const operator = ref(null);
 
   const refetch = () => {
+    console.log("hola")
     api.get(`enterprises/${enterprise}/operators/${pk}`).then((response) => {
       operator.value = response.data.operator;
       isLoading.value = false;

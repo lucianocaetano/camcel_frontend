@@ -37,7 +37,7 @@
       <table-documents
         v-if="documents"
         :documents="documents"
-        :isOperator="true"
+        role=”operator”
       />
 
     </div>

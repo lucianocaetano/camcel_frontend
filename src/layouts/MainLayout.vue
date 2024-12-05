@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr lff" padding="10">
-    <menu-toolbar-layout>
+    <menu-toolbar-layout v-if="userStore.getAuth">
       <router-view />
     </menu-toolbar-layout>
   </q-layout>

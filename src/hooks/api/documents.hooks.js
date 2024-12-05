@@ -1,6 +1,29 @@
 import { ref } from "vue";
 import { api } from "src/boot/axios";
 
+export const useJobDocuments = () => {
+  const isLoading = ref(true);
+  const documents = ref(null);
+
+  const refetch = () => {
+    api.get(`enterprises/${enterprise}/documents`).then((response) => {
+      isLoading.value = false;
+      documents.value = response.data.documents;
+    });
+  };
+
+  api.get(`enterprises/${enterprise}/documents`).then((response) => {
+    isLoading.value = false;
+    documents.value = response.data.documents;
+  });
+
+  return {
+    documents,
+    isLoading,
+    refetch,
+  };
+};
+
 export const useDocuments = (enterprise) => {
   const isLoading = ref(true);
   const documents = ref(null);
@@ -51,29 +74,24 @@ export const useDocumentsOperators = (enterprise, operator) => {
   };
 };
 
-export const handleCreateDocumentEnterprise = async (enterprise, data) => {
+export const useCreateDocumentOperator = async (enterprise, operator, data) => {
   const doc = ref(null);
   const isError = ref(false);
   const error = ref(null);
 
   const formData = new FormData();
 
-  formData.append('title', data.title)
-  formData.append('expire', data.title)
-  formData.append('is_valid', data.title)
-  formData.append('enterprise_id', data.enterprise_id)
+  formData.append("title", data.title);
+  formData.append("expire", data.expire);
+  formData.append("is_valid", data.is_valid ? "1" : "0");
 
-  if (data.document !== null) {
-    formData.append("document", data.document);
-  }
+  formData.append("document", data.document);
 
+  console.log(operator)
   await api
-    .post(`enterprises/${enterprise}/operators/documents`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" }
-      }
-    )
+    .post(`enterprises/${enterprise}/operators/${operator}/documents`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
     .then((response) => {
       doc.value = response.data.document;
     })
@@ -88,6 +106,41 @@ export const handleCreateDocumentEnterprise = async (enterprise, data) => {
   return {
     isError,
     error,
-    doc
-  }
+    doc,
+  };
+};
+
+export const useCreateDocumentEnterprise = async (enterprise, data) => {
+  const doc = ref(null);
+  const isError = ref(false);
+  const error = ref(null);
+
+  const formData = new FormData();
+
+  formData.append("title", data.title);
+  formData.append("expire", data.expire);
+  formData.append("is_valid", data.is_valid ? "1" : "0");
+
+  formData.append("document", data.document);
+
+  await api
+    .post(`enterprises/${enterprise}/documents`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    .then((response) => {
+      doc.value = response.data.document;
+    })
+    .catch((err) => {
+      if (err.response.status === 422) {
+        const messages = err.response.data.errors;
+        isError.value = true;
+        error.value = messages;
+      }
+    });
+
+  return {
+    isError,
+    error,
+    doc,
+  };
 };

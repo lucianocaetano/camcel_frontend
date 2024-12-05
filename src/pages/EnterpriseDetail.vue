@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-left: 20px;">
     <valid-delete-enterprise-menu
       v-if="showDeleteMenu"
       :show="showDeleteMenu"
@@ -7,7 +7,7 @@
       @handleDeleteMenuAccept="handleDeleteMenuAccept"
     />
 
-    <div v-if="!isLoading" class="q-mx-auto" style="max-width: 1000px">
+    <div v-if="!isLoading">
       <q-img
         :src="`${api_base_backend}/${enterprise.image}`"
         alt="esta enterprise no pose imagen"
@@ -71,7 +71,11 @@
                 <q-btn
                   type="button"
                   class="text-lg text-negative q-ml-md"
-                  @click="()=>{showDeleteMenu=true}"
+                  @click="
+                    () => {
+                      showDeleteMenu = true;
+                    }
+                  "
                 >
                   Eliminar <span class="mdi mdi-trash-can"></span>
                 </q-btn>
@@ -92,7 +96,7 @@
         </div>
       </div>
       <operators-list :enterprise="enterprise.slug" />
-      <table-documents :documents="documents"/>
+      <table-documents :documents="documents" @refetch="refetchDocuments" />
     </div>
 
     <div v-if="isLoading" class="text-center">Cargando...</div>
@@ -135,14 +139,18 @@ export default {
     const route = useRoute();
     const { params } = route;
     const { enterprise, isLoading, refetch } = useEnterprise(params.slug);
-    const { documents, isLoading: isLoadingDocuments, refetch: refetchDocuments } = useDocuments(params.slug);
+    const {
+      documents,
+      isLoading: isLoadingDocuments,
+      refetch: refetchDocuments,
+    } = useDocuments(params.slug);
 
     const enterpriseNoExiste = ref(false);
     const enterpriseEditMenu = ref(false);
 
     const showDeleteMenu = ref(false);
 
-    const handleDeleteMenuClose = () => showDeleteMenu.value = false;
+    const handleDeleteMenuClose = () => (showDeleteMenu.value = false);
 
     const handleDeleteMenuAccept = async () => {
       showDeleteMenu.value = false;
@@ -166,7 +174,7 @@ export default {
     };
 
     return {
-      isLoading: isLoading  && isLoadingDocuments,
+      isLoading: isLoading && isLoadingDocuments,
       enterprise,
       documents,
       isLoadingDocuments,

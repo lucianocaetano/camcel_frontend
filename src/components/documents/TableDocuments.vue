@@ -3,7 +3,7 @@
     <div class="flex justify-between q-mb-md items-center">
       <h4 class="text-h4 q-my-none">Documentos :</h4>
 
-      <add-document role="enterprise"/>
+      <add-document role="enterprise" @refetch="refetch"/>
     </div>
     <q-markup-table flat bordered>
       <thead class="bg-teal text-white">
@@ -22,7 +22,6 @@
         />
       </tbody>
     </q-markup-table>
-
   </div>
 </template>
 
@@ -41,12 +40,19 @@ export default {
       type: Array,
       required: true,
     },
+    role: {
+      type: String,
+      required: true,
+    }
   },
-  setup() {
+  setup(props, {emit}) {
     const doc = ref(null);
+
+    const refetch = () => emit("refetch");
 
     return {
       doc,
+      refetch
     };
   },
 };

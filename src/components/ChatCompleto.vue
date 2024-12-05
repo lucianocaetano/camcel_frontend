@@ -60,7 +60,7 @@
         >
           <q-item-section avatar>
             <q-avatar>
-              <img :src="conversation.avatar">
+           <img :src="conversation.avatar">
             </q-avatar>
           </q-item-section>
 

@@ -1,7 +1,7 @@
 <template>
   <tr
     :class="`${document.is_valid ? '' : 'bg-grey-4'} cursor-pointer`"
-    @click="() => show = true"
+    @click="() => (show = true)"
   >
     <td class="text-left">
       {{ document.title }}
@@ -22,12 +22,18 @@
       <q-btn
         v-if="document.is_valid"
         type="button"
+        @click="handleValidate"
         class="q-ml-md text-h6 text-negative"
       >
         <span class="mdi mdi-thumb-down"></span>
       </q-btn>
 
-      <q-btn v-else type="button" class="q-ml-md text-h6 text-primary">
+      <q-btn
+        v-else
+        @click="handleInValidate"
+        type="button"
+        class="q-ml-md text-h6 text-primary"
+      >
         <span class="mdi mdi-thumb-up"></span>
       </q-btn>
     </td>
@@ -50,21 +56,36 @@ export default {
       type: Object,
       required: true,
     },
+    role: {
+      type: String,
+      required: true,
+    }
   },
   components: {
-    ViewDocument
+    ViewDocument,
   },
   data(props) {
     const show = ref(false);
 
+    const handleInValidate = (e) => {
+      e.stopPropagation();
+      console.log("validate")
+    };
 
-    const handleCloseDocumentView = () => show.value = false;
+    const handleValidate = (e) => {
+      e.stopPropagation();
+      console.log("in validate")
+    };
+
+    const handleCloseDocumentView = () => (show.value = false);
 
     return {
       document: props.document,
       show,
       handleCloseDocumentView,
+      handleInValidate,
+      handleValidate
     };
   },
 };
-</script>
+</script>unvalidate

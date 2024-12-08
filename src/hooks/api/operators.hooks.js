@@ -4,21 +4,29 @@ import { api } from "src/boot/axios";
 export const useOperators = (enterprise) => {
   const isLoading = ref(true);
   const operators = ref(null);
+  const paginate = ref(null);
 
-  const refetch = () => {
-    api.get(`enterprises/${enterprise}/operators`).then((response) => {
+  const refetch = (page=1) => {
+    api.get(`enterprises/${enterprise}/operators`, {
+      params: {
+        page
+      },
+    }).then((response) => {
       isLoading.value = false;
       operators.value = response.data.operators;
+      paginate.value = response.data.meta;
     });
   };
 
   api.get(`enterprises/${enterprise}/operators`).then((response) => {
     isLoading.value = false;
     operators.value = response.data.operators;
+    paginate.value = response.data.meta;
   });
 
   return {
     operators,
+    paginate,
     isLoading,
     refetch,
   };

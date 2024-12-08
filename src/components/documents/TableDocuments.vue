@@ -1,10 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100vh" class="q-mt-xl">
-    <div class="flex justify-between q-mb-md items-center">
-      <h4 class="text-h4 q-my-none">Documentos :</h4>
-
-      <add-document role="enterprise" @refetch="refetch"/>
-    </div>
+  <div style="width: 100%; height: 100vh">
     <q-markup-table flat bordered>
       <thead class="bg-teal text-white">
         <tr>
@@ -22,37 +17,47 @@
         />
       </tbody>
     </q-markup-table>
+    <Pagination
+      :currentPage="paginate.current_page"
+      :maxPages="paginate.last_page"
+      @handleRefetchPage="handleRefetchPage"
+    />
   </div>
 </template>
 
 <script>
-import AddDocument from "./AddDocument.vue";
 import DocumentItem from "./DocumentItem.vue";
 import { ref } from "vue";
+import Pagination from "../helpers/Pagination.vue";
 
 export default {
   components: {
-    AddDocument,
     DocumentItem,
+    Pagination,
   },
   props: {
     documents: {
       type: Array,
       required: true,
     },
-    role: {
-      type: String,
+    paginate: {
+      type: Object,
       required: true,
-    }
+    },
   },
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const doc = ref(null);
 
     const refetch = () => emit("refetch");
 
+    const handleRefetchPage = (page) => {
+      emit("refetch", page);
+    };
+
     return {
       doc,
-      refetch
+      refetch,
+      handleRefetchPage,
     };
   },
 };

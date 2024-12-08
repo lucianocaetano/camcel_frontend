@@ -4,17 +4,17 @@ import { api } from "src/boot/axios";
 export const useEnterprises = () => {
   const isLoading = ref(true);
   const enterprises = ref(null);
+  const paginate = ref(null);
 
-  const refetch = (filter = null) => {
+  const refetch = (params = {}) => {
     api
       .get("enterprises", {
-        params: {
-          filter,
-        },
+        params
       })
       .then((response) => {
         isLoading.value = false;
-        enterprises.value = response.data;
+        enterprises.value = response.data.enterprises;
+        paginate.value = response.data.meta;
       });
   };
 
@@ -26,11 +26,13 @@ export const useEnterprises = () => {
     })
     .then((response) => {
       isLoading.value = false;
-      enterprises.value = response.data;
+      enterprises.value = response.data.enterprises;
+      paginate.value = response.data.meta;
     });
 
   return {
     enterprises,
+    paginate,
     isLoading,
     refetch,
   };
@@ -98,7 +100,7 @@ export const useCreateEnterprise = async (data) => {
       enterprise.value = response.data.enterprise;
     })
     .catch((err) => {
-      console.error(err)
+      console.error(err);
       if (err.response.status === 422) {
         const messages = err.response.data.errors;
         isError.value = true;
@@ -117,9 +119,9 @@ export const useUpdateEnterprise = async (slug, data) => {
   const enterprise = ref(null);
   const isError = ref(false);
   const error = ref(null);
-  
+
   const formData = new FormData();
-  
+
   formData.append("_method", "PUT");
   formData.append("nombre", data.name);
   formData.append("user_id", data.user?.id);
@@ -134,7 +136,7 @@ export const useUpdateEnterprise = async (slug, data) => {
     })
     .then((response) => {
       if (response.status === 200) {
-        enterprise.value = response.data.enterprise
+        enterprise.value = response.data.enterprise;
       }
     })
     .catch((err) => {

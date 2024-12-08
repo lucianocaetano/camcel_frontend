@@ -27,9 +27,20 @@
     <tbody
       :class="$q.dark.isActive ? 'bg-grey-91973-08-07 00:00:00' : 'bg-grey-3'"
     >
-      <operator-item v-for="operator in operators" :key="operator.id" :operator="operator" @refetch="refetch"/>
+      <operator-item
+        v-for="operator in operators"
+        :key="operator.id"
+        :operator="operator"
+        @refetch="refetch"
+      />
     </tbody>
   </q-markup-table>
+  <pagination
+    v-if="!isLoading"
+    :currentPage="paginate.current_page"
+    :maxPages="paginate.last_page"
+    @handleRefetchPage="handleRefetchPage"
+  />
 </template>
 
 <script>
@@ -37,11 +48,13 @@ import { useOperators } from "src/hooks/api/operators.hooks";
 import MenuCreateOperator from "src/components/MenuCreateOperator.vue";
 import OperatorItem from "src/components/operators/OperatorItem.vue";
 import { ref } from "vue";
+import Pagination from "src/components/helpers/Pagination.vue";
 
 export default {
   components: {
     MenuCreateOperator,
-    OperatorItem
+    OperatorItem,
+    Pagination,
   },
   props: {
     enterprise: {
@@ -50,12 +63,18 @@ export default {
     },
   },
   setup(props) {
-    const { operators, isLoading, refetch } = useOperators(props.enterprise);
+    const { operators, paginate, isLoading, refetch } = useOperators(
+      props.enterprise
+    );
 
     const createOperator = ref(false);
 
     const handleOpenCreateOperator = () => {
       createOperator.value = true;
+    };
+
+    const handleRefetchPage = (page) => {
+      refetch(page);
     };
 
     const handleCloseCreateOperator = () => {
@@ -64,7 +83,9 @@ export default {
     };
 
     return {
+      handleRefetchPage,
       operators,
+      paginate,
       createOperator,
       handleOpenCreateOperator,
       handleCloseCreateOperator,

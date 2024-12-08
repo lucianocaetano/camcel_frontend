@@ -52,9 +52,8 @@ export default {
       }
     };
 
-    const handleDeleteMenuClose = () => {
-      emit("handleDeleteMenuClose");
-    };
+    const handleDeleteMenuClose = () => emit("handleDeleteMenuClose");
+
     return {
       handleDeleteMenuClose,
       handleDeleteMenuAccept,

@@ -24,24 +24,34 @@ export const useJobDocuments = () => {
   };
 };
 
-export const useDocuments = (enterprise) => {
+export const useDocumentsEnterprise = (enterprise) => {
   const isLoading = ref(true);
   const documents = ref(null);
+  const paginate = ref(null);
 
-  const refetch = () => {
-    api.get(`enterprises/${enterprise}/documents`).then((response) => {
-      isLoading.value = false;
-      documents.value = response.data.documents;
-    });
+  const refetch = (page = 1) => {
+    api
+      .get(`enterprises/${enterprise}/documents`, {
+        params: {
+          page,
+        },
+      })
+      .then((response) => {
+        isLoading.value = false;
+        documents.value = response.data.documents;
+        paginate.value = response.data.meta;
+      });
   };
 
   api.get(`enterprises/${enterprise}/documents`).then((response) => {
     isLoading.value = false;
     documents.value = response.data.documents;
+    paginate.value = response.data.meta;
   });
 
   return {
     documents,
+    paginate,
     isLoading,
     refetch,
   };
@@ -50,12 +60,18 @@ export const useDocuments = (enterprise) => {
 export const useDocumentsOperators = (enterprise, operator) => {
   const isLoading = ref(true);
   const documents = ref(null);
+  const paginate = ref(null);
 
-  const refetch = () => {
+  const refetch = (page = 1) => {
     api
-      .get(`enterprises/${enterprise}/operators/${operator}/documents`)
+      .get(`enterprises/${enterprise}/operators/${operator}/documents`, {
+        params: {
+          page,
+        },
+      })
       .then((response) => {
         isLoading.value = false;
+        paginate.value = response.data.meta;
         documents.value = response.data.documents;
       });
   };
@@ -65,10 +81,12 @@ export const useDocumentsOperators = (enterprise, operator) => {
     .then((response) => {
       isLoading.value = false;
       documents.value = response.data.documents;
+      paginate.value = response.data.meta;
     });
 
   return {
     documents,
+    paginate,
     isLoading,
     refetch,
   };
@@ -87,11 +105,14 @@ export const useCreateDocumentOperator = async (enterprise, operator, data) => {
 
   formData.append("document", data.document);
 
-  console.log(operator)
   await api
-    .post(`enterprises/${enterprise}/operators/${operator}/documents`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    })
+    .post(
+      `enterprises/${enterprise}/operators/${operator}/documents`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    )
     .then((response) => {
       doc.value = response.data.document;
     })

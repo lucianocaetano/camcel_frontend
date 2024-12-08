@@ -13,6 +13,7 @@
             label="nombre"
             v-model="enterprise.name"
           />
+
           <div
             v-for="(error, index) in error_edit?.nombre"
             :key="index"
@@ -44,6 +45,14 @@
             :options="users"
             label="Usuarios"
           />
+
+          <div
+            v-for="(error, index) in error_edit?.user_id"
+            :key="index"
+            class="q-mt-sm"
+          >
+            <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
+          </div>
 
           <q-btn
             label="Editar"

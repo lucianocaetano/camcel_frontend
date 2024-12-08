@@ -1,13 +1,20 @@
 <template>
   <div>
     <div class="q-pa-md" v-if="!isLoading">
+      <valid-delete-operator-menu
+        v-if="showDeleteMenu"
+        :show="showDeleteMenu"
+        @handleDeleteMenuClose="handleDeleteMenuClose"
+        @handleDeleteMenuAccept="handleDeleteMenuAccept"
+      />
+
       <div class="flex justify-between q-mb-md">
         <q-btn color="primary" flat @click="handleOutClick">salir</q-btn>
         <div class="flex justify-between">
           <q-btn color="primary q-mr-md" @click="handleOpenUpdateOperator">
             Editar
           </q-btn>
-          <q-btn color="negative" @click="handleDeleteClick">Borrar</q-btn>
+          <q-btn color="negative" @click="showDeleteMenu = true">Borrar</q-btn>
         </div>
       </div>
       <q-card class="my-card" flat bordered>
@@ -34,12 +41,12 @@
           </tbody>
         </q-markup-table>
       </q-card>
-      <table-documents
-        v-if="documents"
-        :documents="documents"
-        role=”operator”
-      />
-
+      <div class="q-mt-xl">
+        <operator-documents
+          :enterprise="operator.enterprise"
+          :operator="operator.id"
+        />
+      </div>
     </div>
     <MenuEditOperator
       v-if="updateOperator"
@@ -53,37 +60,50 @@
 </template>
 
 <script>
-import { api } from "src/boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import MenuEditOperator from "src/components/MenuEditOperator.vue";
 import TableDocuments from "../components/documents/TableDocuments.vue";
 import { useOperator, useDeleteOperator } from "src/hooks/api/operators.hooks";
-import { useDocumentsOperators as useDocuments } from "src/hooks/api/documents.hooks";
+import OperatorDocuments from "src/components/documents/OperatorDocuments.vue";
+import ValidDeleteOperatorMenu from "src/components/ValidDeleteMenu.vue";
 
 export default {
-  components: { MenuEditOperator, TableDocuments },
+  components: {
+    MenuEditOperator,
+    TableDocuments,
+    OperatorDocuments,
+    ValidDeleteOperatorMenu,
+  },
   setup() {
     const { params } = useRoute();
     const router = useRouter();
 
-    const {operator, isLoading, refetch} = useOperator(params.enterprise, params.pk)
-    const { documents, isLoading: isLoadingDocuments, refetch: refetchDocuments } = useDocuments(params.enterprise, params.pk);
-    
-    const handleOutClick = () => router.push("/enterprise/" + params.enterprise);
+    const { operator, isLoading, refetch } = useOperator(
+      params.enterprise,
+      params.pk
+    );
 
-    const handleDeleteClick = async () => {
-      await useDeleteOperator(params.enterprise, params.pk)
-      refetch();
+    const handleOutClick = () =>
+      router.push("/enterprise/" + params.enterprise);
+
+    const showDeleteMenu = ref(false);
+
+    const handleDeleteMenuClose = () => (showDeleteMenu.value = false);
+
+    const handleDeleteMenuAccept = async () => {
+      showDeleteMenu.value = false;
+      await useDeleteOperator(params.enterprise, params.pk);
+      handleOutClick();
     };
 
     const updateOperator = ref(false);
-    
-    const handleOpenUpdateOperator = () => updateOperator.value = true;
+
+    const handleOpenUpdateOperator = () => (updateOperator.value = true);
 
     const handleCloseUpdateOperator = () => {
-      updateOperator.value = false 
-      refetch() 
+      updateOperator.value = false;
+      refetch();
     };
 
     return {
@@ -91,11 +111,11 @@ export default {
       handleCloseUpdateOperator,
       handleOpenUpdateOperator,
       operator,
-      documents,
-      isLoading: isLoading && isLoadingDocuments,
-      refetchDocuments,
+      isLoading: isLoading,
       handleOutClick,
-      handleDeleteClick,
+      showDeleteMenu,
+      handleDeleteMenuAccept,
+      handleDeleteMenuClose
     };
   },
 };

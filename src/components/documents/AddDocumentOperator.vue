@@ -31,14 +31,20 @@
             <span class="q-pa-xs bg-negative text-white">{{ error }}</span>
           </div>
 
-          <q-file color="teal" filled label="Documento" v-model="data.document">
+          <q-file
+            color="teal"
+            filled
+            label="Documento"
+            required
+            v-model="data.document"
+          >
             <template v-slot:prepend>
               <q-icon name="cloud_upload" />
             </template>
           </q-file>
 
           <div
-            v-for="(error, index) in error_create?.image"
+            v-for="(error, index) in error_create?.document"
             :key="index"
             class="q-mt-sm"
           >
@@ -95,83 +101,71 @@
 import { reactive, ref } from "vue";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import { useRoute } from "vue-router";
-import { useCreateDocumentEnterprise } from "src/hooks/api/documents.hooks";
+import { useCreateDocumentOperator } from "src/hooks/api/documents.hooks";
 
 export default {
   components: {
     Datepicker,
   },
   props: {
-    role: {
+    enterprise: {
+      type: String,
+      required: true,
+    },
+    operator: {
       type: String,
       required: true,
     },
   },
   setup(props, { emit }) {
-    const { params } = useRoute();
     const show = ref(false);
-    const datetime = ref(null);
 
-    const handleCloseMenu = () => {
-      show.value = false;
-      emit("refetch");
-    };
-
-    const error_create = ref(null);
     const data = reactive({
       title: "",
       type: "",
       is_valid: false,
       document: null,
       expire: null,
-      document: null,
     });
 
+    const handleCloseMenu = () => {
+      show.value = false;
+      
+      data.title = ""
+      data.type = ""
+      data.is_valid = false
+      data.document = null
+      data.expire = null
+
+      emit("refetch");
+    };
+
+    const error_create = ref(null)
+
     const handleAddDocument = async () => {
-      const role = props.role;
-      console.log(role)
-      if (role === "enterprise") {
-        const { isError, error } = await useCreateDocumentEnterprise(
-          params.slug,
-          {
-            ...data,
-            expire: data.expire.replace("T", " "),
-          }
-        );
-
-        if (isError.value) {
-          error_create.value = error.value;
-        } else {
-          handleCloseMenu();
+      console.log(data)
+      const { isError, error } = await useCreateDocumentOperator(
+        props.enterprise,
+        props.operator,
+        {
+          ...data,
+          expire: data.expire.replace("T", " "),
         }
-      }
-
-      if (role === "operator") {
-        const { isError, error } = await useCreateDocumentOperator(
-          params.enterprise,
-          params.pk,
-          {
-            ...data,
-            expire: data.expire.replace("T", " "),
-          }
-        );
-
-        if (isError.value) {
-          error_create.value = error.value;
-        } else {
-          handleCloseMenu();
-        }
+      );
+      if (isError.value) {
+        error_create.value = error.value;
+        console.log(error_create.value);
+      } else {
+        handleCloseMenu()
       }
     };
 
     return {
-      datetime,
       data,
+      error_create,
       handleAddDocument,
       show,
       handleCloseMenu,
-      error_create,
       show,
     };
   },

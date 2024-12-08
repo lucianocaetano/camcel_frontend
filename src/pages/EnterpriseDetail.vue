@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-left: 20px;">
+  <div style="margin-left: 20px">
     <valid-delete-enterprise-menu
       v-if="showDeleteMenu"
       :show="showDeleteMenu"
@@ -96,7 +96,7 @@
         </div>
       </div>
       <operators-list :enterprise="enterprise.slug" />
-      <table-documents :documents="documents" @refetch="refetchDocuments" />
+      <enterprise-documents :enterprise="enterprise.slug" />
     </div>
 
     <div v-if="isLoading" class="text-center">Cargando...</div>
@@ -116,34 +116,28 @@ import MenuCreateOperator from "src/components/MenuCreateOperator.vue";
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import { api_base_backend } from "../helpers.js";
-import TableDocuments from "../components/documents/TableDocuments.vue";
+import EnterpriseDocuments from "../components/documents/EnterpriseDocuments.vue";
 import {
   useEnterprise,
   useValidEnterprise,
   useNotValidEnterprise,
   useDeleteEnterprise,
 } from "src/hooks/api/enterprises.hooks";
-import { useDocuments } from "src/hooks/api/documents.hooks";
 import ValidDeleteEnterpriseMenu from "src/components/ValidDeleteMenu.vue";
 
 export default {
   components: {
     EditEnterprise,
     MenuCreateOperator,
-    TableDocuments,
+    EnterpriseDocuments,
     OperatorsList,
     ValidDeleteEnterpriseMenu,
   },
   setup() {
     const router = useRouter();
-    const route = useRoute();
-    const { params } = route;
+    const { params } = useRoute();
+
     const { enterprise, isLoading, refetch } = useEnterprise(params.slug);
-    const {
-      documents,
-      isLoading: isLoadingDocuments,
-      refetch: refetchDocuments,
-    } = useDocuments(params.slug);
 
     const enterpriseNoExiste = ref(false);
     const enterpriseEditMenu = ref(false);
@@ -174,11 +168,8 @@ export default {
     };
 
     return {
-      isLoading: isLoading && isLoadingDocuments,
+      isLoading: isLoading,
       enterprise,
-      documents,
-      isLoadingDocuments,
-      refetchDocuments,
       showDeleteMenu,
       enterpriseNoExiste,
       handleDeleteMenuClose,

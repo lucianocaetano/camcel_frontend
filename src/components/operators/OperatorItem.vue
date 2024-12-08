@@ -20,7 +20,7 @@
         {{ operator.is_valid ? "Autorizado" : "No Autorizado" }}
       </p>
     </td>
-    <td class="text-left">{{ operator.cargo }} hola</td>
+    <td class="text-left">{{ operator.cargo }}</td>
     <td class="text-center">
       <q-btn
         type="button"

@@ -1,18 +1,4 @@
 <template>
-  <ValidDeleteUserMenu
-    v-if="validDeleteMenu"
-    :show="validDeleteMenu"
-    @handleDeleteMenuClose="handleDeleteUserMenuClose"
-    @handleDeleteMenuAccept="handleDeleteUserMenuAccept"
-  />
-
-  <EditUser
-    v-if="editUser"
-    :show="editUser"
-    @handleCloseEditUser="handleEditUserMenuClose"
-    :user="user"
-  />
-
   <CreateUser
     v-if="createUser"
     :show="createUser"
@@ -40,28 +26,24 @@
         >Crear</q-btn
       >
 
-      <q-btn-dropdown
-        color="#000000"
-        label="Filtrar"
-        text-color="#000000"
-      >
+      <q-btn-dropdown color="#000000" :label="role === null? 'Todos': role" text-color="#000000">
         <q-list>
-          <q-item clickable v-close-popup @click="fetchUsers(undefined)">
+          <q-item clickable v-close-popup @click="role = null">
             <q-item-section>
               <q-item-label>Todos</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item clickable v-close-popup @click="fetchUsers('Admin')">
+          <q-item clickable v-close-popup @click="role = 'Admin'">
             <q-item-section>
               <q-item-label>Admins</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item clickable v-close-popup @click="fetchUsers('Enterprise')">
+          <q-item clickable v-close-popup @click="role = 'Enterprise'">
             <q-item-section>
               <q-item-label>Empresarios</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item clickable v-close-popup @click="fetchUsers('Guard')">
+          <q-item clickable v-close-popup @click="role = 'Guard'">
             <q-item-section>
               <q-item-label>Guardias</q-item-label>
             </q-item-section>
@@ -80,129 +62,64 @@
           <th class="text-right">Actions</th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-for="user in users" :key="user.id" class="cursor-pointer">
-          <template
-            v-if="user.name.toLowerCase().includes(search.toLowerCase())"
-          >
-            <td class="text-left">{{ user.name }}</td>
-            <td class="text-right">{{ user.email }}</td>
-            <td class="text-right">{{ user.rol }}</td>
-            <td class="text-right">
-              <q-btn
-                icon="edit"
-                class="text-primary q-mr-md"
-                @click="() => handleEditUserMenuOpen(user)"
-              />
-              <q-btn
-                icon="delete"
-                class="text-negative"
-                @click="() => handleDeleteUserMenuOpen(user.id)"
-              />
-            </td>
-          </template>
-        </tr>
+      <tbody v-if="!isLoading">
+        <UserItem
+          v-for="user in users"
+          :key="user.id"
+          :user="user"
+          @refetch="refetch"
+        />
       </tbody>
     </q-markup-table>
+
+    <Pagination
+      v-if="!isLoading"
+      :currentPage="paginate.current_page"
+      :maxPages="paginate.last_page"
+      @handleRefetchPage="handleRefetchPage"
+    />
   </div>
 </template>
 
 <script>
-import { api } from "src/boot/axios";
-import { ref } from "vue";
-import ValidDeleteUserMenu from "src/components/ValidDeleteMenu.vue";
-import EditUser from "src/components/EditUser.vue";
+import { ref, watch } from "vue";
 import CreateUser from "src/components/CreateUser.vue";
+import Pagination from "src/components/helpers/Pagination.vue";
+import UserItem from "src/components/users/UserItem.vue";
+import { useUsers } from "src/hooks/api/users.hooks.js";
 
 export default {
   components: {
-    ValidDeleteUserMenu,
+    UserItem,
     CreateUser,
-    EditUser,
+    Pagination,
+    UserItem,
   },
   setup() {
-    const isLoading = ref(true);
-    const users = ref([]);
-    const user = ref(null);
-
+    const { isLoading, refetch, users, paginate } = useUsers();
     const search = ref("");
 
-    const validDeleteMenu = ref(false);
-    const createUser = ref(false);
-    const editUser = ref(false);
-    const id_user_delete = ref(null);
+    const role = ref(null)
 
-    const handleDeleteUser = (id) => {
-      api.delete(`users/${id}}`).then((response) => {
-        if (response.status === 200) {
-          users.value = users.value.filter((user) => user.id !== id);
-        }
-      });
-    };
+    watch([role, search], () => {
+      console.log(role.value)
+      refetch({
+        role: role.value,
+        search: search.value,
+      })
+    })
 
-    const handleDeleteUserMenuOpen = (id) => {
-      id_user_delete.value = id;
-      validDeleteMenu.value = true;
-    };
-
-    const handleDeleteUserMenuClose = () => {
-      validDeleteMenu.value = false;
-    };
-
-    const handleDeleteUserMenuAccept = () => {
-      validDeleteMenu.value = false;
-      handleDeleteUser(id_user_delete.value);
-      id_user_delete.value = null;
-      fetchUsers()
-    };
-
-    const fetchUsers = (role = undefined) => {
-      const params = {
-        role,
-      };
-
-      api.get("users", { params }).then((response) => {
-        isLoading.value = false;
-        users.value = response.data.users;
-      });
-    };
-
-    fetchUsers();
-
-    const handleEditUserMenuClose = () => {
-      fetchUsers();
-      editUser.value = false;
-    };
-
-    const handleEditUserMenuOpen = (user_table) => {
-      user.value = user_table;
-      editUser.value = true;
-    };
-
-    const handleCreateUserMenuClose = () => {
-      fetchUsers();
-      createUser.value = false;
-    };
-    const handleCreateUserMenuOpen = () => {
-      createUser.value = true;
+    const handleRefetchPage = (page) => {
+      refetch({role: role.value, page});
     };
 
     return {
-      fetchUsers,
+      refetch,
       users,
+      role,
+      paginate,
+      handleRefetchPage,
       isLoading,
-      handleDeleteUser,
-      validDeleteMenu,
-      handleDeleteUserMenuClose,
-      handleDeleteUserMenuOpen,
-      handleDeleteUserMenuAccept,
-      handleEditUserMenuClose,
-      handleEditUserMenuOpen,
-      editUser,
-      handleCreateUserMenuClose,
-      handleCreateUserMenuOpen,
-      createUser,
-      user,
       search,
     };
   },
